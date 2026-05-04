@@ -390,6 +390,7 @@ import { withBase } from '@/utils/path';
     const msgs = loadMessages();
     msgs.push({ name, email, content, mood: selectedMood, color: selectedColor, time: Date.now(), likes: 0, liked: false, isOwner: true, replies: [] });
     saveMessages(msgs);
+    if (window.unlockAchievement) window.unlockAchievement('commenter');
     contentInput.value = ''; charNum.textContent = '0';
     renderMessages();
     messageList.scrollIntoView({ behavior: 'smooth', block: 'end' });

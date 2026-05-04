@@ -3,41 +3,44 @@ import Layout from '@/layouts/Layout/Layout.astro';
 import { getCollection } from 'astro:content';
 import { getReadingTime, getWordCount, formatDate } from '@/utils';
 import { withBase } from '@/utils/path';
+import { slugify } from '@/utils/slug';
 import Copyright from '@/components/Copyright/Copyright.astro';
 import PrevNextArticle from '@/components/PrevNextArticle/PrevNextArticle.astro';
 import Comment from '@/components/Comment/Comment.astro';
 import Reward from '@/components/Reward/Reward.astro';
 import Aside from '@/components/Aside/Aside.astro';
+import TOC from '@/components/TOC/TOC.astro';
 import '@/styles/Article.less';
 
 export async function getStaticPaths() {
   const allPosts = await getCollection('blog', ({ data }) => !data.draft);
-  return allPosts.map(post => ({ params: { article: post.id }, props: { post } }));
+  return allPosts.map(post => ({ params: { article: slugify(post.id) }, props: { post } }));
 }
 
 const { post } = Astro.props;
-const { Content } = await post.render();
+const { Content, headings } = await post.render();
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 const ci = allPosts.findIndex(p => p.id === post.id);
 const prevPost = ci > 0 ? allPosts[ci - 1] : null;
 const nextPost = ci < allPosts.length - 1 ? allPosts[ci + 1] : null;
-const articleUrl = `https://3229154448.github.io/pixel-astro-blog/article/${post.id}`;
-const coverUrl = post.data.cover ? withBase(post.data.cover) : '';
+const slug = slugify(post.id);
+const articleUrl = `https://3229154448.github.io/pixel-astro-blog/article/${slug}`;
+const tocHeadings = headings.filter((h: any) => h.depth >= 2 && h.depth <= 4);
 ---
 <Layout title={post.data.title} description={post.data.description} cover={post.data.cover}>
   <div class="page-layout">
     <article class="article-detail pixel-card" style="padding: 0;">
-      {coverUrl && (
+      {post.data.cover && (
         <div class="article-cover">
-          <img src={coverUrl} alt={post.data.title} />
+          <img src={withBase(post.data.cover)} alt={post.data.title} />
           <div class="cover-overlay">
             <h1 class="cover-title">{post.data.title}</h1>
           </div>
         </div>
       )}
       <div class="article-body-wrap" style="padding: 2rem;">
-        {!coverUrl && <h1 class="article-title">{post.data.title}</h1>}
+        {!post.data.cover && <h1 class="article-title">{post.data.title}</h1>}
         <div class="article-meta">
           <span>📅 {formatDate(post.data.date)}</span>
           {post.data.updated && <span>🔄 {formatDate(post.data.updated)}</span>}
@@ -53,16 +56,20 @@ const coverUrl = post.data.cover ? withBase(post.data.cover) : '';
         <div class="article-content"><Content /></div>
         <Copyright title={post.data.title} url={articleUrl} />
         {post.data.reward && <Reward />}
-        <PrevNextArticle prev={prevPost ? { title: prevPost.data.title, slug: prevPost.id } : null} next={nextPost ? { title: nextPost.data.title, slug: nextPost.id } : null} />
+        <PrevNextArticle prev={prevPost ? { title: prevPost.data.title, slug: slugify(prevPost.id) } : null} next={nextPost ? { title: nextPost.data.title, slug: slugify(nextPost.id) } : null} />
         {post.data.comment && <Comment />}
       </div>
     </article>
-    <Aside />
+    <div class="article-sidebar">
+      {tocHeadings.length > 0 && <TOC headings={tocHeadings} />}
+      <Aside />
+    </div>
   </div>
 </Layout>
 
 <style lang="less">
 .page-layout { display: flex; gap: 1.5rem; width: 100%; }
+.article-sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
 .article-cover {
   position: relative; overflow: hidden; border-bottom: 4px solid var(--pixel-dark);
   img { width: 100%; height: 280px; object-fit: cover; image-rendering: auto; }
@@ -76,8 +83,8 @@ const coverUrl = post.data.cover ? withBase(post.data.cover) : '';
   font-family: var(--pixel-font-title); font-size: 14px; color: white;
   text-shadow: 3px 3px 0 var(--pixel-dark); line-height: 1.6;
 }
-.article-meta { margin: 1rem 0; }
-.article-tags { margin-bottom: 0.5rem; }
-.pixel-divider { margin: 1rem 0; }
-@media (max-width: 768px) { .page-layout { flex-direction: column; } }
+@media (max-width: 768px) {
+  .page-layout { flex-direction: column; }
+  .article-sidebar .toc { display: none; }
+}
 </style>

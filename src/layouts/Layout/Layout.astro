@@ -5,6 +5,7 @@ import Head from '@/components/Head/Head.astro';
 import Header from '@/components/Header/Header.astro';
 import Footer from '@/components/Footer/Footer.astro';
 import BackTop from '@/components/BackTop/BackTop.astro';
+import Achievement from '@/components/Achievement/Achievement.astro';
 import { siteConfig } from '@/config';
 
 interface Props { title?: string; description?: string; cover?: string; }
@@ -14,6 +15,8 @@ const { title = siteConfig.title, description = siteConfig.description, cover } 
 <html lang="zh-CN">
   <Head title={title} description={description} cover={cover} />
   <body class="pixel-grid crt">
+    <!-- 阅读进度条 -->
+    <div class="reading-progress" id="reading-progress"><div class="reading-progress-bar" id="reading-progress-bar"></div></div>
     <Header />
     <main class="main-inner">
       <div class="main-inner-content vh-animation vh-animation-init">
@@ -29,6 +32,7 @@ const { title = siteConfig.title, description = siteConfig.description, cover } 
     </main>
     <Footer />
     <BackTop />
+    <Achievement />
 
     <!-- Konami Code 彩蛋 -->
     <div class="konami-overlay" id="konami-overlay" style="display:none">
@@ -87,10 +91,20 @@ const { title = siteConfig.title, description = siteConfig.description, cover } 
   }
 }
 .konami-msg { font-family: var(--pixel-font-body); font-size: 18px; color: var(--pixel-dark); margin: 1.5rem 0; line-height: 1.6; }
+
+.reading-progress {
+  position: fixed; top: 0; left: 0; width: 100%; height: 4px; z-index: 999;
+  background: var(--pixel-dark);
+}
+.reading-progress-bar {
+  height: 100%; width: 0%; background: var(--pixel-accent);
+  transition: width 0.1s;
+  box-shadow: 0 0 8px var(--pixel-accent);
+}
 </style>
 
 <script is:inline>
-  // Konami Code: ↑↑↓↓←→←→BA
+  // Konami Code
   const konamiCode = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
   let konamiIdx = 0;
   document.addEventListener('keydown', (e) => {
@@ -98,12 +112,20 @@ const { title = siteConfig.title, description = siteConfig.description, cover } 
       konamiIdx++;
       if (konamiIdx === konamiCode.length) {
         konamiIdx = 0;
-        const overlay = document.getElementById('konami-overlay');
-        overlay.style.display = 'flex';
-        // 彩虹闪烁效果
+        document.getElementById('konami-overlay').style.display = 'flex';
+        if (window.unlockAchievement) window.unlockAchievement('konami');
         document.body.style.animation = 'rainbow 0.5s ease 3';
         setTimeout(() => { document.body.style.animation = ''; }, 2000);
       }
     } else { konamiIdx = 0; }
   });
+
+  // Reading progress
+  const progressBar = document.getElementById('reading-progress-bar');
+  window.addEventListener('scroll', () => {
+    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+    progressBar.style.width = pct + '%';
+  }, { passive: true });
 </script>

@@ -52,7 +52,7 @@
   input?.addEventListener('input', async () => {
     const q = input.value.trim().toLowerCase();
     if (!q) { results!.innerHTML = '<div class="search-placeholder">输入关键词开始搜索</div>'; return; }
-    if (!searchData.length) { try { const r = await fetch('/pixel-astro-blog/vh_static/search.json'); searchData = await r.json(); } catch { return; } }
+    if (!searchData.length) { try { const r = await fetch(import.meta.env.BASE_URL + 'vh_static/search.json'); searchData = await r.json(); } catch { return; } }
     const f = searchData.filter(i => i.title.toLowerCase().includes(q) || i.content.toLowerCase().includes(q));
     results!.innerHTML = f.slice(0, 10).map(i => `<div class="search-item"><a href="${i.url}">${i.title}</a><p>${i.content.substring(0, 120)}...</p></div>`).join('') || '<div class="search-placeholder">没有找到相关文章</div>';
   });

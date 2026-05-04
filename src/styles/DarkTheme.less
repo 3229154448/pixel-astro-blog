@@ -1,0 +1,69 @@
+// 暗色主题 CSS 变量覆盖
+:root[data-theme="dark"] {
+  --pixel-bg: #1a1c2c;
+  --pixel-bg-grid: #262b44;
+  --pixel-dark: #e8e0d5;
+  --pixel-card: #262b44;
+  --pixel-border: #e8e0d5;
+  --pixel-accent: #ff6b6b;
+  --pixel-secondary: #5cdb95;
+  --pixel-primary: #ff6b6b;
+  --pixel-yellow: #ffd93d;
+  --pixel-purple: #b19cd9;
+  --pixel-green: #5cdb95;
+  --pixel-blue: #64b5f6;
+  --pixel-orange: #ffb74d;
+  --pixel-pink: #f48fb1;
+  --pixel-cyan: #4dd0e1;
+  --pixel-text: #e8e0d5;
+  --pixel-text-dim: #9e9eb8;
+  --pixel-code-bg: #0d0f1a;
+  --pixel-code-color: #5cdb95;
+  --pixel-shadow-color: #e8e0d5;
+  --vh-white-color: var(--pixel-bg);
+  --vh-box-shadow: 6px 6px 0 0 rgba(232, 224, 213, 0.3);
+  --vh-body-bg: var(--pixel-bg);
+
+  // CRT 扫描线在暗色下更明显
+  & > body::after {
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px, rgba(0, 255, 100, 0.03) 2px, rgba(0, 255, 100, 0.03) 4px
+    ) !important;
+  }
+
+  // 像素网格在暗色下变绿
+  & > body::before {
+    background-image: repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(92, 219, 149, 0.08) 19px, rgba(92, 219, 149, 0.08) 20px),
+      repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(92, 219, 149, 0.08) 19px, rgba(92, 219, 149, 0.08) 20px) !important;
+  }
+}
+
+// 像素卡片在暗色下
+:root[data-theme="dark"] .pixel-card {
+  background: var(--pixel-bg);
+  border-color: var(--pixel-dark);
+  box-shadow: 6px 6px 0 0 rgba(232, 224, 213, 0.15);
+  &:hover {
+    box-shadow: 8px 8px 0 0 rgba(232, 224, 213, 0.2);
+  }
+}
+
+// 输入框暗色
+:root[data-theme="dark"] .pixel-input {
+  background: var(--pixel-code-bg);
+  color: var(--pixel-text);
+  border-color: var(--pixel-dark);
+}
+
+// 图片暗色下加发光边框
+:root[data-theme="dark"] img {
+  filter: brightness(0.92);
+}
+
+// 代码块暗色
+:root[data-theme="dark"] pre {
+  background: var(--pixel-code-bg) !important;
+  border: 3px solid var(--pixel-green) !important;
+  box-shadow: 4px 4px 0 0 rgba(92, 219, 149, 0.3) !important;
+  color: var(--pixel-code-color) !important;
+}

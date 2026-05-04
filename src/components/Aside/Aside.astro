@@ -1,4 +1,5 @@
 ---
+import { slugify } from '@/utils/slug';
 import { siteConfig } from '@/config';
 import { withBase } from '@/utils/path';
 import { getCollection } from 'astro:content';
@@ -11,6 +12,7 @@ const tags = [...new Set(allPosts.flatMap(p => p.data.tags))];
 const recentPosts = allPosts.slice(0, 3);
 const catColors = ['var(--pixel-accent)', 'var(--pixel-secondary)', 'var(--pixel-yellow)', 'var(--pixel-purple)', 'var(--pixel-blue)', 'var(--pixel-orange)'];
 const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel-purple)', 'var(--pixel-accent)', 'var(--pixel-green)', 'var(--pixel-blue)', 'var(--pixel-pink)', 'var(--pixel-cyan)', 'var(--pixel-orange)'];
+import { slugify } from '@/utils/slug';
 ---
 <aside class="aside">
   <!-- 个人信息卡 -->
@@ -70,7 +72,7 @@ const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel
     <h3 class="aside-title">⭐ 推荐文章</h3>
     <div class="rec-list">
       {recentPosts.map(post => (
-        <a href={withBase(`/article/${post.id}`)} class="rec-item">
+        <a href={withBase(`/article/${slugify(post.id)}`)} class="rec-item">
           <div class="rec-thumb">
             <img src={withBase(post.data.cover || '/assets/images/avatar-default.webp')} alt={post.data.title} width="64" height="64" />
           </div>

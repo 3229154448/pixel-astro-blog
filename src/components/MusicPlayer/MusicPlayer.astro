@@ -169,7 +169,7 @@ const playlistJson = JSON.stringify(playlist.map(p => ({
     } else {
       if (!audio.src || audio.src === '') loadTrack(currentIndex);
       audio.play().catch(() => {});
-      disc.classList.add('spinning');
+      disc.classList.add('spinning'); if(window.unlockAchievement) window.unlockAchievement('musician');
       btnPlay.textContent = '⏸';
       isPlaying = true;
     }

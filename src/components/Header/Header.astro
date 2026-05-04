@@ -20,6 +20,7 @@ const currentPath = Astro.url.pathname;
     </nav>
     <div class="header-actions">
       <Search />
+      <button class="theme-toggle pixel-btn" id="theme-toggle" title="切换主题">☀️</button>
       <button class="mobile-menu-btn pixel-btn" id="mobile-menu-btn" aria-label="菜单">
         <span></span><span></span><span></span>
       </button>
@@ -64,6 +65,12 @@ const currentPath = Astro.url.pathname;
   &:hover { color: var(--pixel-accent); }
 }
 .header-actions { display: flex; align-items: center; gap: 0.5rem; }
+.theme-toggle {
+  padding: 6px 10px; font-size: 18px; background: var(--pixel-yellow);
+  border: 3px solid var(--pixel-dark); box-shadow: 3px 3px 0 0 var(--pixel-dark);
+  cursor: pointer; transition: all 0.15s;
+  &:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--pixel-dark); }
+}
 .mobile-menu-btn {
   display: none; flex-direction: column; gap: 4px; padding: 8px;
   background: var(--pixel-purple);
@@ -86,9 +93,18 @@ const currentPath = Astro.url.pathname;
 <script>
   const btn = document.getElementById('mobile-menu-btn');
   const sidebar = document.getElementById('mobile-sidebar');
-  if (btn && sidebar) {
-    btn.addEventListener('click', () => {
-      sidebar.classList.toggle('open');
-    });
-  }
+  if (btn && sidebar) { btn.addEventListener('click', () => { sidebar.classList.toggle('open'); }); }
+
+  const themeBtn = document.getElementById('theme-toggle');
+  const root = document.documentElement;
+  const saved = localStorage.getItem('pixel-theme');
+  if (saved === 'dark') { root.setAttribute('data-theme', 'dark'); themeBtn.textContent = '🌙'; }
+  themeBtn?.addEventListener('click', () => {
+    const isDark = root.getAttribute('data-theme') === 'dark';
+    const next = isDark ? 'light' : 'dark';
+    if (next === 'light') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', 'dark');
+    localStorage.setItem('pixel-theme', next);
+    themeBtn.textContent = next === 'dark' ? '🌙' : '☀️';
+    if (next === 'dark' && window.unlockAchievement) window.unlockAchievement('dark-side');
+  });
 </script>

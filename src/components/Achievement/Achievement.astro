@@ -1,0 +1,115 @@
+---
+---
+<div class="achievement-toast" id="achievement-toast" style="display:none">
+  <div class="achievement-inner pixel-card">
+    <div class="ach-icon" id="ach-icon">🏆</div>
+    <div class="ach-info">
+      <div class="ach-label pixel-font">ACHIEVEMENT UNLOCKED!</div>
+      <div class="ach-name" id="ach-name"></div>
+      <div class="ach-desc" id="ach-desc"></div>
+    </div>
+  </div>
+</div>
+
+<style lang="less">
+.achievement-toast {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 300;
+  animation: ach-in 0.5s ease-out;
+}
+.achievement-inner {
+  display: flex; align-items: center; gap: 12px; padding: 1rem 1.5rem;
+  background: var(--pixel-yellow); border: 4px solid var(--pixel-dark);
+  box-shadow: 6px 6px 0 0 var(--pixel-dark);
+}
+.ach-icon { font-size: 32px; animation: ach-bounce 0.5s ease infinite alternate; }
+@keyframes ach-bounce { from { transform: scale(1); } to { transform: scale(1.2); } }
+.ach-info { min-width: 0; }
+.ach-label { font-size: 8px; color: var(--pixel-dark); margin-bottom: 2px; }
+.ach-name { font-family: var(--pixel-font-title); font-size: 10px; color: var(--pixel-accent); }
+.ach-desc { font-size: 13px; color: var(--pixel-dark); }
+@keyframes ach-in { from { opacity: 0; transform: translateY(20px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+</style>
+
+<script is:inline>
+  const ACH_KEY = 'pixel-achievements';
+  const achievements = {
+    'first-visit': { icon: '🎮', name: '初来乍到', desc: '首次访问像素小站' },
+    'reader': { icon: '📖', name: '书虫', desc: '阅读第一篇文章' },
+    'explorer': { icon: '🗺️', name: '探险家', desc: '访问5个不同页面' },
+    'musician': { icon: '🎵', name: '音乐人', desc: '播放一首红白机音乐' },
+    'commenter': { icon: '💬', name: '话痨', desc: '发布一条留言' },
+    'konami': { icon: '⬆️', name: '魂斗罗老兵', desc: '输入魂斗罗秘籍' },
+    'dark-side': { icon: '🌙', name: '暗面探索者', desc: '切换到暗色主题' },
+    'scroll-master': { icon: '📜', name: '卷轴大师', desc: '滚动页面超过5000像素' },
+    'archiver': { icon: '📚', name: '档案迷', desc: '访问归档页面' },
+    'social': { icon: '🤝', name: '社交达人', desc: '访问友链页面' },
+  };
+
+  function getUnlocked() { try { return JSON.parse(localStorage.getItem(ACH_KEY) || '[]'); } catch { return []; } }
+  function saveUnlocked(list) { localStorage.setItem(ACH_KEY, JSON.stringify(list)); }
+
+  function unlock(id) {
+    const unlocked = getUnlocked();
+    if (unlocked.includes(id)) return;
+    unlocked.push(id);
+    saveUnlocked(unlocked);
+    showAchievement(id);
+  }
+
+  function showAchievement(id) {
+    const ach = achievements[id];
+    if (!ach) return;
+    const toast = document.getElementById('achievement-toast');
+    document.getElementById('ach-icon').textContent = ach.icon;
+    document.getElementById('ach-name').textContent = ach.name;
+    document.getElementById('ach-desc').textContent = ach.desc;
+    toast.style.display = 'block';
+    // Play 8-bit sound
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const notes = [523, 659, 784, 1047]; // C5 E5 G5 C6
+      notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square'; osc.frequency.value = freq;
+        gain.gain.value = 0.1;
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(ctx.currentTime + i * 0.1);
+        osc.stop(ctx.currentTime + i * 0.1 + 0.1);
+      });
+    } catch {}
+    setTimeout(() => { toast.style.display = 'none'; }, 4000);
+  }
+
+  // 自动检测成就
+  // 首次访问
+  if (!sessionStorage.getItem('pixel-visited')) {
+    sessionStorage.setItem('pixel-visited', '1');
+    setTimeout(() => unlock('first-visit'), 1500);
+  }
+
+  // 页面探索
+  const pagesKey = 'pixel-pages-visited';
+  const pages = JSON.parse(sessionStorage.getItem(pagesKey) || '[]');
+  const currentPath = window.location.pathname;
+  if (!pages.includes(currentPath)) { pages.push(currentPath); sessionStorage.setItem(pagesKey, JSON.stringify(pages)); }
+  if (pages.length >= 5) setTimeout(() => unlock('explorer'), 2000);
+
+  // 归档页
+  if (currentPath.includes('/archives')) setTimeout(() => unlock('archiver'), 1000);
+  // 友链页
+  if (currentPath.includes('/links') || currentPath.includes('/friends')) setTimeout(() => unlock('social'), 1000);
+  // 文章页
+  if (currentPath.includes('/article/')) setTimeout(() => unlock('reader'), 2000);
+
+  // 滚动大师
+  let totalScrolled = 0;
+  window.addEventListener('scroll', () => {
+    totalScrolled += Math.abs(window.scrollY - (window._lastScroll || 0));
+    window._lastScroll = window.scrollY;
+    if (totalScrolled > 5000) unlock('scroll-master');
+  }, { passive: true });
+
+  // 暴露给其他组件用
+  window.unlockAchievement = unlock;
+</script>

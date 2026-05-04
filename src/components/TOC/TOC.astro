@@ -1,0 +1,56 @@
+---
+interface Props { headings: { depth: number; slug: string; text: string }[] }
+const { headings } = Astro.props;
+const filtered = headings.filter(h => h.depth >= 2 && h.depth <= 4);
+---
+{filtered.length > 0 && (
+  <nav class="toc" id="toc">
+    <h3 class="toc-title pixel-font">📜 目录</h3>
+    <ul class="toc-list">
+      {filtered.map(h => (
+        <li class:list={[`toc-h${h.depth}`]}>
+          <a href={`#${h.slug}`} class="toc-link" data-slug={h.slug}>{h.text}</a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}
+
+<style lang="less">
+.toc {
+  position: sticky; top: 80px; max-height: calc(100vh - 100px); overflow-y: auto;
+  background: var(--pixel-bg-grid); border: 4px solid var(--pixel-dark);
+  box-shadow: 6px 6px 0 0 var(--pixel-dark); padding: 1rem; min-width: 200px;
+  max-width: 260px; align-self: flex-start;
+}
+.toc-title { font-size: 10px; color: var(--pixel-dark); margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px dashed var(--pixel-dark); }
+.toc-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 2px; }
+.toc-link {
+  display: block; padding: 4px 8px; font-size: 14px; color: var(--pixel-text-dim);
+  text-decoration: none; border-left: 3px solid transparent; transition: all 0.15s;
+  &:hover { color: var(--pixel-accent); border-left-color: var(--pixel-accent); }
+  &.active { color: var(--pixel-accent); border-left-color: var(--pixel-accent); background: rgba(231,76,60,0.1); font-weight: bold; }
+}
+.toc-h2 .toc-link { padding-left: 8px; }
+.toc-h3 .toc-link { padding-left: 16px; font-size: 13px; }
+.toc-h4 .toc-link { padding-left: 24px; font-size: 12px; }
+</style>
+
+<script>
+  const tocLinks = document.querySelectorAll('.toc-link');
+  const headings = document.querySelectorAll('h2[id], h3[id], h4[id]');
+
+  function updateActive() {
+    let current = '';
+    headings.forEach(h => {
+      const rect = h.getBoundingClientRect();
+      if (rect.top <= 120) current = h.id;
+    });
+    tocLinks.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('data-slug') === current);
+    });
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+</script>

@@ -1,4 +1,5 @@
 ---
+import { slugify } from '@/utils/slug';
 import { formatDate, getYear } from '@/utils';
 import { withBase } from '@/utils/path';
 import { getCollection } from 'astro:content';
@@ -6,6 +7,7 @@ const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 const yearMap = new Map<string, typeof allPosts>();
 allPosts.forEach(post => { const y = getYear(post.data.date); if (!yearMap.has(y)) yearMap.set(y, []); yearMap.get(y)!.push(post); });
+import { slugify } from '@/utils/slug';
 ---
 <div class="archive-page">
   <h1 class="pixel-page-title">📜 昔日归档</h1>
@@ -15,7 +17,7 @@ allPosts.forEach(post => { const y = getYear(post.data.date); if (!yearMap.has(y
         <h2 class="archive-year-title pixel-font">◄ {year} ►</h2>
         <div class="archive-posts">
           {posts.map(post => (
-            <a href={withBase(`/article/${post.id}`)} class="archive-item">
+            <a href={withBase(`/article/${slugify(post.id)}`)} class="archive-item">
               <span class="archive-date">{formatDate(post.data.date)}</span>
               <span class="archive-title">{post.data.title}</span>
               {post.data.categories[0] && <span class="category-pixel">{post.data.categories[0]}</span>}

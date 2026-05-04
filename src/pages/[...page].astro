@@ -1,6 +1,7 @@
 ---
 import PageLayout from '@/layouts/PageLayout/PageLayout.astro';
 import ArticleCard from '@/components/ArticleCard/ArticleCard.astro';
+import { slugify } from '@/utils/slug';
 import Pagination from '@/components/Pagination/Pagination.astro';
 import MainHeader from '@/components/MainHeader/MainHeader.astro';
 import { getCollection } from 'astro:content';
@@ -21,7 +22,7 @@ const { page } = Astro.props;
       <ArticleCard title={post.data.title} description={post.data.description} cover={post.data.cover}
         date={post.data.date} tags={post.data.tags} categories={post.data.categories}
         readingTime={getReadingTime(post.body || '')} wordCount={getWordCount(post.body || '')}
-        link={withBase(`/article/${post.id}`)} pin={post.data.pin} />
+        link={withBase(`/article/${slugify(post.id)}`)} pin={post.data.pin} />
     ))}
   </div>
   <Pagination currentPage={page.currentPage} totalPages={page.lastPage} />

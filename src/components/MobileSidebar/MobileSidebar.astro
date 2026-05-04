@@ -1,39 +1,93 @@
 ---
 import { siteConfig } from '@/config';
 import { withBase } from '@/utils/path';
+import { getCollection } from 'astro:content';
+import { slugify } from '@/utils/slug';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const categories = [...new Set(allPosts.flatMap(p => p.data.categories))];
+const tags = [...new Set(allPosts.flatMap(p => p.data.tags))];
 ---
 <aside class="mobile-sidebar" id="mobile-sidebar">
   <div class="mobile-header">
     <span class="pixel-font">MENU</span>
     <button class="pixel-btn close-btn" onclick="document.getElementById('mobile-sidebar').classList.remove('open')">✕</button>
   </div>
+
+  <!-- 个人信息 -->
+  <div class="mobile-profile">
+    <img src={withBase('/assets/images/avatar-default.webp')} alt={siteConfig.author} class="mobile-avatar" width="64" height="64" />
+    <h3 class="mobile-name pixel-font">{siteConfig.author}</h3>
+    <p class="mobile-motto">{siteConfig.motto}</p>
+  </div>
+
+  <!-- 导航 -->
   <nav class="mobile-nav">
     {siteConfig.navbar.map(item => (
       <a href={withBase(item.link)} class="mobile-nav-link" onclick="document.getElementById('mobile-sidebar').classList.remove('open')">{item.name}</a>
     ))}
   </nav>
+
+  <!-- 分类 -->
+  <div class="mobile-section">
+    <h4 class="mobile-section-title pixel-font">📁 分类</h4>
+    {categories.map(cat => (
+      <a href={withBase(`/categories/${cat}`)} class="mobile-cat" onclick="document.getElementById('mobile-sidebar').classList.remove('open')">{cat}</a>
+    ))}
+  </div>
+
+  <!-- 标签 -->
+  <div class="mobile-section">
+    <h4 class="mobile-section-title pixel-font">🏷️ 标签</h4>
+    <div class="mobile-tags">
+      {tags.map(tag => (
+        <a href={withBase(`/tag/${tag}`)} class="mobile-tag" onclick="document.getElementById('mobile-sidebar').classList.remove('open')">{tag}</a>
+      ))}
+    </div>
+  </div>
 </aside>
 
 <style lang="less">
 .mobile-sidebar {
-  position: fixed; top: 0; left: -100%; width: 288px; height: 100vh;
+  position: fixed; top: 0; left: -100%; width: 300px; height: 100vh;
   background: var(--pixel-bg); border-right: 4px solid var(--pixel-dark);
   box-shadow: 6px 0 0 0 var(--pixel-dark); z-index: 99;
-  transition: left 0.3s;
+  transition: left 0.3s; overflow-y: auto;
   &.open { left: 0; }
 }
 .mobile-header {
   display: flex; justify-content: space-between; align-items: center;
   padding: 1rem 1.25rem; border-bottom: 4px solid var(--pixel-dark);
   background: var(--pixel-accent); color: white;
+  .pixel-font { font-family: var(--pixel-font-title); font-size: 12px; }
 }
-.pixel-font { font-family: var(--pixel-font-title); font-size: 12px; }
 .close-btn { padding: 6px 10px; background: var(--pixel-dark); color: white; font-size: 14px; }
-.mobile-nav { padding: 1rem; display: flex; flex-direction: column; gap: 4px; }
+
+.mobile-profile { text-align: center; padding: 1.25rem; border-bottom: 2px dashed rgba(26,26,46,0.15); }
+.mobile-avatar { width: 64px; height: 64px; border: 3px solid var(--pixel-dark); box-shadow: 3px 3px 0 0 var(--pixel-dark); image-rendering: pixelated; }
+.mobile-name { font-family: var(--pixel-font-title); font-size: 10px; color: var(--pixel-dark); margin: 8px 0 4px; }
+.mobile-motto { font-size: 14px; color: var(--pixel-text-dim); }
+
+.mobile-nav { padding: 1rem; display: flex; flex-direction: column; gap: 4px; border-bottom: 2px dashed rgba(26,26,46,0.15); }
 .mobile-nav-link {
-  display: block; padding: 12px 16px; font-family: var(--pixel-font-body);
-  font-size: 18px; font-weight: bold; color: var(--pixel-dark); text-decoration: none;
+  display: block; padding: 10px 14px; font-family: var(--pixel-font-body);
+  font-size: 17px; font-weight: bold; color: var(--pixel-dark); text-decoration: none;
   border: 2px solid transparent; transition: all 0.2s;
   &:hover { background: var(--pixel-bg-grid); border-color: var(--pixel-dark); color: var(--pixel-accent); }
+}
+
+.mobile-section { padding: 1rem; border-bottom: 2px dashed rgba(26,26,46,0.15); }
+.mobile-section-title { font-size: 9px; color: var(--pixel-dark); margin-bottom: 8px; }
+.mobile-cat {
+  display: block; padding: 6px 12px; font-size: 15px; color: var(--pixel-dark);
+  text-decoration: none; border-left: 3px solid var(--pixel-accent); margin-bottom: 2px;
+  &:hover { color: var(--pixel-accent); }
+}
+.mobile-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.mobile-tag {
+  display: inline-block; padding: 3px 8px; font-size: 12px; font-weight: bold;
+  color: var(--pixel-dark); background: var(--pixel-yellow); border: 2px solid var(--pixel-dark);
+  box-shadow: 2px 2px 0 0 var(--pixel-dark); text-decoration: none;
+  &:hover { background: var(--pixel-accent); color: white; }
 }
 </style>

@@ -13,7 +13,7 @@ export async function GET(context: any) {
       title: post.data.title,
       pubDate: post.data.date,
       description: post.data.description,
-      link: `/article/${post.id}/`,
+      link: `/pixel-astro-blog/article/${post.id}/`,
     })),
   });
 }
