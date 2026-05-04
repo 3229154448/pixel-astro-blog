@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import { formatDate, getYear } from '@/utils';
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const yearMap = new Map<string, typeof allPosts>();
+allPosts.forEach(post => { const y = getYear(post.data.date); if (!yearMap.has(y)) yearMap.set(y, []); yearMap.get(y)!.push(post); });
+---
+<div class="archive-page">
+  <h1 class="pixel-page-title">📜 归档</h1>
+  <div class="archive-list">
+    {[...yearMap.entries()].map(([year, posts]) => (
+      <div class="archive-year">
+        <h2 class="archive-year-title">◄ {year} ►</h2>
+        <ul class="archive-posts">
+          {posts.map(post => (<li class="archive-item"><span class="archive-date">{formatDate(post.data.date)}</span><a href={`/article/${post.id}`} class="archive-link">{post.data.title}</a></li>))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</div>
+<style lang="less">
+.pixel-page-title { font-family: var(--pixel-font-title); font-size: 14px; color: var(--pixel-primary); text-shadow: 3px 3px 0 var(--pixel-shadow-color); margin-bottom: 1.5rem; }
+.archive-year { margin-bottom: 2rem; }
+.archive-year-title { font-family: var(--pixel-font-title); font-size: 11px; color: var(--pixel-secondary); padding: 8px 16px; background: var(--pixel-card); border: var(--pixel-border-width) solid var(--pixel-border); box-shadow: var(--pixel-shadow-offset) var(--pixel-shadow-offset) 0 0 var(--pixel-shadow-color); display: inline-block; margin-bottom: 1rem; }
+.archive-posts { list-style: none; padding: 0; }
+.archive-item { display: flex; gap: 1rem; align-items: baseline; padding: 8px 0; border-bottom: 2px dotted var(--pixel-border); }
+.archive-date { font-family: var(--pixel-font-title); font-size: 8px; color: var(--pixel-text-dim); white-space: nowrap; }
+.archive-link { font-size: 18px; color: var(--pixel-text); &:hover { color: var(--pixel-primary); } }
+</style>

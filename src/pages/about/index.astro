@@ -1,0 +1,24 @@
+---
+import PageLayout from '@/layouts/PageLayout/PageLayout.astro';
+import { siteConfig } from '@/config';
+import '@/styles/About.less';
+---
+<PageLayout title="关于">
+  <div class="about-page">
+    <div class="about-header">
+      <div class="about-avatar"><img src="/assets/images/avatar-default.webp" alt={siteConfig.author} width="96" height="96" /></div>
+      <h1 class="about-name">{siteConfig.author}</h1>
+      <p class="about-motto">{siteConfig.motto}</p>
+    </div>
+    <div class="about-content pixel-card" style="padding: 2rem;">
+      <h2>👋 你好！</h2>
+      <p>欢迎来到像素小站！这是一个基于 Astro 构建的像素风博客主题。</p>
+      <h2>🎮 关于本站</h2>
+      <p>本站采用像素风格设计，灵感来源于 8-Bit 复古游戏。我们相信，简单的像素也能表达无限的可能。</p>
+      <h2>🛠️ 技术栈</h2>
+      <p>▪ Astro - 现代静态站点生成器<br/>▪ TypeScript - 类型安全<br/>▪ Less - CSS 预处理器<br/>▪ 像素风设计 - Press Start 2P + VT323 字体</p>
+      <h2>📧 联系方式</h2>
+      <p>▪ GitHub: <a href="https://github.com">github.com</a><br/>▪ Email: pixel@example.com</p>
+    </div>
+  </div>
+</PageLayout>

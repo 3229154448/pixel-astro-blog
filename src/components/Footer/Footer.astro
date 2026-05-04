@@ -1,0 +1,15 @@
+---
+import { siteConfig } from '@/config';
+---
+<footer class="vh-footer">
+  <div class="footer-inner">
+    <p class="footer-text">© {new Date().getFullYear()} {siteConfig.author} | Powered by <a href="https://astro.build" target="_blank">Astro</a></p>
+    <p class="footer-sub">◼ Pixel Astro Blog ◼ {siteConfig.motto}</p>
+  </div>
+</footer>
+<style lang="less">
+.vh-footer { background: var(--pixel-card); border-top: var(--pixel-border-width) solid var(--pixel-border); margin-top: auto; }
+.footer-inner { max-width: var(--vh-main-max-width); margin: 0 auto; padding: 1.5rem; text-align: center; }
+.footer-text { font-family: var(--pixel-font-title); font-size: 8px; color: var(--pixel-text-dim); a { color: var(--pixel-primary); border-bottom: 2px solid; } }
+.footer-sub { font-family: var(--pixel-font-body); font-size: 16px; color: rgba(244,244,244,0.28); margin-top: 0.5rem; }
+</style>

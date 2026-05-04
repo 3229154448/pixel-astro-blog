@@ -1,0 +1,17 @@
+---
+interface Props { prev?: { title: string; slug: string } | null; next?: { title: string; slug: string } | null; }
+const { prev, next } = Astro.props;
+---
+{(prev || next) && (
+  <nav class="prev-next">
+    {prev && <a href={`/article/${prev.slug}`} class="prev-next-item pixel-card"><span class="pn-label">◄ 上一篇</span><span class="pn-title">{prev.title}</span></a>}
+    {next && <a href={`/article/${next.slug}`} class="prev-next-item pixel-card"><span class="pn-label">下一篇 ►</span><span class="pn-title">{next.title}</span></a>}
+  </nav>
+)}
+<style lang="less">
+.prev-next { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; }
+.prev-next-item { display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem; text-decoration: none; border-bottom: none; }
+.pn-label { font-family: var(--pixel-font-title); font-size: 8px; color: var(--pixel-text-dim); }
+.pn-title { font-family: var(--pixel-font-title); font-size: 9px; color: var(--pixel-primary); }
+@media screen and (max-width: 768px) { .prev-next { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,27 @@
+---
+import PageLayout from '@/layouts/PageLayout/PageLayout.astro';
+import { talkingData } from '@/page_data/Talking';
+import { formatDateTime } from '@/utils';
+---
+<PageLayout title="动态">
+  <h1 class="pixel-page-title">💬 动态</h1>
+  <div class="talking-list">
+    {talkingData.map(item => (
+      <div class="talking-item pixel-card">
+        <div class="talking-meta">
+          <span class="talking-date">🕐 {formatDateTime(item.date)}</span>
+          {item.tags && item.tags.map(tag => (<span class="pixel-tag">{tag}</span>))}
+        </div>
+        <p class="talking-content">{item.content}</p>
+      </div>
+    ))}
+  </div>
+</PageLayout>
+<style lang="less">
+.pixel-page-title { font-family: var(--pixel-font-title); font-size: 12px; color: var(--pixel-primary); text-shadow: 3px 3px 0 var(--pixel-shadow-color); margin-bottom: 1.5rem; }
+.talking-list { display: flex; flex-direction: column; gap: 1rem; }
+.talking-item { padding: 1.25rem; }
+.talking-meta { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+.talking-date { font-family: var(--pixel-font-title); font-size: 8px; color: var(--pixel-text-dim); }
+.talking-content { font-size: 20px; color: var(--pixel-text); line-height: 1.6; }
+</style>

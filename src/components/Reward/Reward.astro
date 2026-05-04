@@ -1,0 +1,20 @@
+---
+import { siteConfig } from '@/config';
+---
+{siteConfig.reward.enable && (
+  <div class="reward-section">
+    <p class="reward-title">☕ 赞赏支持</p>
+    <p class="reward-desc">{siteConfig.reward.comment}</p>
+    <div class="reward-images">
+      <div class="reward-item"><img src={siteConfig.reward.alipay} alt="支付宝" width="160" height="160" /><span>支付宝</span></div>
+      <div class="reward-item"><img src={siteConfig.reward.wechat} alt="微信" width="160" height="160" /><span>微信</span></div>
+    </div>
+  </div>
+)}
+<style lang="less">
+.reward-section { margin-top: 2rem; padding: 1.5rem; text-align: center; background: var(--pixel-card); border: var(--pixel-border-width) solid var(--pixel-border); box-shadow: var(--pixel-shadow-offset) var(--pixel-shadow-offset) 0 0 var(--pixel-shadow-color); }
+.reward-title { font-family: var(--pixel-font-title); font-size: 10px; color: var(--pixel-secondary); margin-bottom: 0.5rem; }
+.reward-desc { font-size: 18px; color: var(--pixel-text-dim); margin-bottom: 1rem; }
+.reward-images { display: flex; justify-content: center; gap: 1.5rem; }
+.reward-item { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; img { border: var(--pixel-border-width) solid var(--pixel-border); box-shadow: 3px 3px 0 0 var(--pixel-shadow-color); image-rendering: pixelated; } span { font-family: var(--pixel-font-title); font-size: 8px; color: var(--pixel-text-dim); } }
+</style>

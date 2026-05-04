@@ -1,0 +1,51 @@
+---
+import Layout from '@/layouts/Layout/Layout.astro';
+import Aside from '@/components/Aside/Aside.astro';
+import { siteConfig } from '@/config';
+
+interface Props { title?: string; description?: string; cover?: string; }
+const { title, description, cover } = Astro.props;
+const typewriterTexts = JSON.stringify(siteConfig.typewriter);
+---
+<Layout title={title} description={description} cover={cover}>
+  <div class="home-banner pixel-card">
+    <h1 class="banner-title">{siteConfig.title}</h1>
+    <p class="banner-subtitle" id="typewriter"></p>
+  </div>
+  <div class="page-layout">
+    <div class="page-main"><slot /></div>
+    <Aside />
+  </div>
+</Layout>
+
+<script is:inline define:vars={{ typewriterTexts }}>
+  const texts = JSON.parse(typewriterTexts);
+  const el = document.getElementById('typewriter');
+  if (el) {
+    let ti = 0, ci = 0, del = false;
+    function type() {
+      const cur = texts[ti];
+      if (del) { el.textContent = cur.substring(0, --ci); } else { el.textContent = cur.substring(0, ++ci); }
+      let d = del ? 50 : 120;
+      if (!del && ci === cur.length) { d = 2000; del = true; }
+      else if (del && ci === 0) { del = false; ti = (ti + 1) % texts.length; d = 500; }
+      setTimeout(type, d);
+    }
+    type();
+  }
+</script>
+
+<style lang="less">
+.home-banner { width: 100%; padding: 3rem 2rem; margin-bottom: 1.5rem; text-align: center; position: relative; overflow: hidden;
+  &::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.05) 3px, rgba(0,0,0,0.05) 4px); pointer-events: none; }
+  .banner-title { font-family: var(--pixel-font-title); font-size: 16px; color: var(--pixel-primary); text-shadow: 4px 4px 0 var(--pixel-shadow-color); margin-bottom: 1rem; }
+  .banner-subtitle { font-family: var(--pixel-font-body); font-size: 24px; color: var(--pixel-text-dim); min-height: 30px; }
+}
+.page-layout { display: flex; gap: 1.5rem; width: 100%; }
+.page-main { flex: 1; min-width: 0; }
+@media screen and (max-width: 768px) {
+  .page-layout { flex-direction: column; }
+  .home-banner { padding: 2rem 1rem; }
+  .banner-title { font-size: 12px !important; }
+}
+</style>

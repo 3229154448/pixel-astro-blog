@@ -1,0 +1,51 @@
+---
+import Layout from '@/layouts/Layout/Layout.astro';
+import { getCollection } from 'astro:content';
+import { getReadingTime, getWordCount, formatDate } from '@/utils';
+import Copyright from '@/components/Copyright/Copyright.astro';
+import PrevNextArticle from '@/components/PrevNextArticle/PrevNextArticle.astro';
+import Comment from '@/components/Comment/Comment.astro';
+import Reward from '@/components/Reward/Reward.astro';
+import Aside from '@/components/Aside/Aside.astro';
+import '@/styles/Article.less';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+  return allPosts.map(post => ({ params: { article: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const ci = allPosts.findIndex(p => p.id === post.id);
+const prevPost = ci > 0 ? allPosts[ci - 1] : null;
+const nextPost = ci < allPosts.length - 1 ? allPosts[ci + 1] : null;
+const articleUrl = `${Astro.site}article/${post.id}`;
+---
+<Layout title={post.data.title} description={post.data.description} cover={post.data.cover}>
+  <div class="page-layout">
+    <article class="article-detail pixel-card" style="padding: 2rem;">
+      <div class="article-header">
+        <h1 class="article-title">{post.data.title}</h1>
+        <div class="article-meta">
+          <span>📅 {formatDate(post.data.date)}</span>
+          {post.data.updated && <span>🔄 {formatDate(post.data.updated)}</span>}
+          <span>⏱️ {getReadingTime(post.body || '')} 分钟</span>
+          <span>📝 {getWordCount(post.body || '')} 字</span>
+        </div>
+        <div class="article-tags">{post.data.tags.map((tag: string) => (<a href={`/tag/${tag}`} class="pixel-tag">{tag}</a>))}</div>
+      </div>
+      <div class="article-content"><Content /></div>
+      <Copyright title={post.data.title} url={articleUrl} />
+      {post.data.reward && <Reward />}
+      <PrevNextArticle prev={prevPost ? { title: prevPost.data.title, slug: prevPost.id } : null} next={nextPost ? { title: nextPost.data.title, slug: nextPost.id } : null} />
+      {post.data.comment && <Comment />}
+    </article>
+    <Aside />
+  </div>
+</Layout>
+<style lang="less">
+.page-layout { display: flex; gap: 1.5rem; width: 100%; }
+@media screen and (max-width: 768px) { .page-layout { flex-direction: column; } }
+</style>

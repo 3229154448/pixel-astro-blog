@@ -1,0 +1,35 @@
+---
+---
+<div class="search-wrapper">
+  <button class="search-btn pixel-btn" id="search-btn">🔍</button>
+  <div class="search-modal" id="search-modal">
+    <div class="search-overlay" id="search-overlay"></div>
+    <div class="search-content pixel-card">
+      <input type="text" class="pixel-input" id="search-input" placeholder="输入关键词搜索..." />
+      <div class="search-results" id="search-results"></div>
+    </div>
+  </div>
+</div>
+<style lang="less">
+.search-wrapper { display: flex; align-items: center; }
+.search-btn { font-size: 14px; padding: 4px 8px; background: var(--pixel-card); }
+.search-modal { display: none; position: fixed; inset: 0; z-index: 200; &.open { display: flex; align-items: flex-start; justify-content: center; padding-top: 10vh; } }
+.search-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.7); }
+.search-content { position: relative; width: 90%; max-width: 600px; padding: 1.5rem; z-index: 1; }
+.search-results { margin-top: 1rem; max-height: 60vh; overflow-y: auto; .search-item { padding: 0.75rem; margin-bottom: 4px; border: 2px solid var(--pixel-border); background: var(--pixel-code-bg); a { display: block; font-family: var(--pixel-font-title); font-size: 9px; color: var(--pixel-primary); } p { font-size: 16px; color: var(--pixel-text-dim); margin-top: 4px; } } }
+</style>
+<script>
+  const btn = document.getElementById('search-btn'), modal = document.getElementById('search-modal'), overlay = document.getElementById('search-overlay'), input = document.getElementById('search-input'), results = document.getElementById('search-results');
+  let searchData: any[] = [];
+  function openSearch() { modal?.classList.add('open'); setTimeout(() => (input as HTMLInputElement)?.focus(), 100); }
+  function closeSearch() { modal?.classList.remove('open'); (input as HTMLInputElement).value = ''; results!.innerHTML = ''; }
+  btn?.addEventListener('click', openSearch); overlay?.addEventListener('click', closeSearch);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSearch(); });
+  input?.addEventListener('input', async () => {
+    const q = (input as HTMLInputElement).value.trim().toLowerCase();
+    if (!q) { results!.innerHTML = ''; return; }
+    if (!searchData.length) { try { const r = await fetch('/vh_static/search.json'); searchData = await r.json(); } catch { return; } }
+    const f = searchData.filter(i => i.title.toLowerCase().includes(q) || i.content.toLowerCase().includes(q));
+    results!.innerHTML = f.slice(0, 10).map(i => `<div class="search-item"><a href="${i.url}">${i.title}</a><p>${i.content.substring(0, 120)}...</p></div>`).join('');
+  });
+</script>

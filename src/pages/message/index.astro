@@ -1,0 +1,14 @@
+---
+import PageLayout from '@/layouts/PageLayout/PageLayout.astro';
+import Comment from '@/components/Comment/Comment.astro';
+---
+<PageLayout title="留言板">
+  <h1 class="pixel-page-title">✉️ 留言板</h1>
+  <div class="message-intro pixel-card" style="padding: 1.5rem;">
+    <p style="font-size: 20px; color: var(--pixel-text); line-height: 1.8;">
+      欢迎来到像素小站的留言板！🎮<br/>有什么想说的，尽管留言吧！<br/>⚠️ 请友善交流，保持像素世界的和平！
+    </p>
+  </div>
+  <Comment />
+</PageLayout>
+<style lang="less">.pixel-page-title { font-family: var(--pixel-font-title); font-size: 12px; color: var(--pixel-primary); text-shadow: 3px 3px 0 var(--pixel-shadow-color); margin-bottom: 1.5rem; }</style>

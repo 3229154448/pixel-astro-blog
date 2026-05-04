@@ -1,0 +1,20 @@
+---
+import { siteConfig } from '@/config';
+const typewriterTexts = JSON.stringify(siteConfig.typewriter);
+---
+<div class="main-header"><div class="main-header-inner pixel-card">
+  <h1 class="main-title">{siteConfig.title}</h1>
+  <p class="main-subtitle" id="main-typewriter"></p>
+</div></div>
+<style lang="less">
+.main-header { width: 100%; margin-bottom: 1.5rem; }
+.main-header-inner { padding: 3rem 2rem; text-align: center; position: relative; overflow: hidden;
+  &::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.05) 3px, rgba(0,0,0,0.05) 4px), repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(0,0,0,0.05) 3px, rgba(0,0,0,0.05) 4px); pointer-events: none; }
+}
+.main-title { font-family: var(--pixel-font-title); font-size: 18px; color: var(--pixel-primary); text-shadow: 4px 4px 0 var(--pixel-shadow-color); margin-bottom: 1rem; }
+.main-subtitle { font-family: var(--pixel-font-body); font-size: 24px; color: var(--pixel-text-dim); min-height: 30px; }
+</style>
+<script is:inline define:vars={{ typewriterTexts }}>
+  const texts = JSON.parse(typewriterTexts); const el = document.getElementById('main-typewriter');
+  if (el) { let ti=0,ci=0,d=false; function t(){const c=texts[ti];if(d){el.textContent=c.substring(0,--ci);}else{el.textContent=c.substring(0,++ci);}let dl=d?50:120;if(!d&&ci===c.length){dl=2000;d=true;}else if(d&&ci===0){d=false;ti=(ti+1)%texts.length;dl=500;}setTimeout(t,dl);}t(); }
+</script>

@@ -1,0 +1,13 @@
+---
+---
+<button class="back-top pixel-btn" id="back-top" title="返回顶部">▲ TOP</button>
+<style lang="less">
+.back-top { position: fixed; bottom: 2rem; right: 2rem; z-index: 90; opacity: 0; transform: translateY(20px); transition: all 0.3s ease; pointer-events: none;
+  &.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  &:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 0 var(--pixel-shadow-color); }
+}
+</style>
+<script>
+  const b = document.getElementById('back-top');
+  if (b) { window.addEventListener('scroll', () => { b.classList.toggle('visible', window.scrollY > 300); }); b.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }); }
+</script>

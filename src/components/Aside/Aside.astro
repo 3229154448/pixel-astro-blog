@@ -1,0 +1,61 @@
+---
+import { siteConfig } from '@/config';
+import { getCollection } from 'astro:content';
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const categories = [...new Set(allPosts.flatMap(p => p.data.categories))];
+const tags = [...new Set(allPosts.flatMap(p => p.data.tags))];
+const recentPosts = allPosts.slice(0, 5);
+---
+<aside class="aside pixel-card">
+  {siteConfig.sidebar.showAnnouncement && (
+    <div class="aside-section">
+      <h3 class="aside-title">📢 公告</h3>
+      <p class="aside-announcement">{siteConfig.sidebar.announcement}</p>
+    </div>
+  )}
+  <div class="aside-section">
+    <h3 class="aside-title">👤 关于</h3>
+    <div class="aside-author">
+      <div class="author-avatar"><img src="/assets/images/avatar-default.webp" alt={siteConfig.author} width="48" height="48" /></div>
+      <div class="author-info">
+        <span class="author-name">{siteConfig.author}</span>
+        <span class="author-motto">{siteConfig.motto}</span>
+      </div>
+    </div>
+  </div>
+  {siteConfig.sidebar.showCategories && categories.length > 0 && (
+    <div class="aside-section">
+      <h3 class="aside-title">📁 分类</h3>
+      <div class="aside-tags">{categories.map(c => (<a href={`/categories/${c}`} class="pixel-tag">{c}</a>))}</div>
+    </div>
+  )}
+  {siteConfig.sidebar.showTags && tags.length > 0 && (
+    <div class="aside-section">
+      <h3 class="aside-title">🏷️ 标签</h3>
+      <div class="aside-tags">{tags.map(t => (<a href={`/tag/${t}`} class="pixel-tag">{t}</a>))}</div>
+    </div>
+  )}
+  {siteConfig.sidebar.showRecentPosts && recentPosts.length > 0 && (
+    <div class="aside-section">
+      <h3 class="aside-title">📝 最新</h3>
+      <ul class="aside-list">{recentPosts.map(post => (<li><a href={`/article/${post.id}`}>{post.data.title}</a></li>))}</ul>
+    </div>
+  )}
+</aside>
+
+<style lang="less">
+.aside { width: var(--vh-aside-width); min-width: var(--vh-aside-width); max-height: calc(100vh - 100px); overflow-y: auto; position: sticky; top: 80px; padding: 1.25rem; }
+.aside-section { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 2px dashed var(--pixel-border); &:last-child { border-bottom: none; } }
+.aside-title { font-family: var(--pixel-font-title); font-size: 9px; color: var(--pixel-primary); margin-bottom: 0.75rem; text-transform: uppercase; }
+.aside-announcement { font-size: 18px; color: var(--pixel-text-dim); line-height: 1.6; }
+.aside-author { display: flex; align-items: center; gap: 0.75rem;
+  .author-avatar { width: 48px; height: 48px; border: 3px solid var(--pixel-primary); box-shadow: 3px 3px 0 0 var(--pixel-shadow-color); img { width: 100%; height: 100%; object-fit: cover; } }
+  .author-info { display: flex; flex-direction: column; gap: 2px; }
+  .author-name { font-family: var(--pixel-font-title); font-size: 9px; color: var(--pixel-primary); }
+  .author-motto { font-size: 16px; color: var(--pixel-text-dim); }
+}
+.aside-tags { display: flex; flex-wrap: wrap; gap: 6px; a { text-decoration: none; border-bottom: none; } }
+.aside-list { list-style: none; padding: 0; li { padding: 4px 0; a { font-size: 17px; color: var(--pixel-text-dim); &:hover { color: var(--pixel-primary); } } } }
+@media screen and (max-width: 768px) { .aside { display: none; } }
+</style>

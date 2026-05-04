@@ -1,0 +1,5 @@
+---
+interface Props { name: string; size?: number; color?: string; }
+const { name, size = 20, color = 'currentColor' } = Astro.props;
+---
+<svg width={size} height={size} viewBox="0 0 24 24" fill={color} style="image-rendering: pixelated;"><slot /></svg>

@@ -1,0 +1,40 @@
+---
+import { siteConfig } from '@/config';
+import Search from '@/components/Search/Search.astro';
+import MobileSidebar from '@/components/MobileSidebar/MobileSidebar.astro';
+const currentPath = Astro.url.pathname;
+---
+<header class="vh-header">
+  <div class="header-inner">
+    <a href="/" class="logo"><span class="logo-icon">◼</span><span class="logo-text">{siteConfig.title}</span></a>
+    <nav class="nav-desktop">
+      {siteConfig.navbar.map(item => (
+        <a href={item.link} class:list={['nav-link', { active: currentPath === item.link || (item.link !== '/' && currentPath.startsWith(item.link)) }]}>{item.name}</a>
+      ))}
+    </nav>
+    <div class="header-actions">
+      <Search />
+      <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="菜单"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+  <MobileSidebar />
+</header>
+
+<style lang="less">
+.vh-header { position: sticky; top: 0; z-index: 100; background: var(--pixel-card); border-bottom: var(--pixel-border-width) solid var(--pixel-border); box-shadow: 0 4px 0 0 var(--pixel-shadow-color); }
+.header-inner { max-width: var(--vh-main-max-width); margin: 0 auto; padding: 0 1.5rem; height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.logo { display: flex; align-items: center; gap: 8px; font-family: var(--pixel-font-title); font-size: 12px; color: var(--pixel-primary) !important; text-decoration: none; border-bottom: none; }
+.nav-desktop { display: flex; gap: 2px; flex-wrap: wrap; justify-content: center; }
+.nav-link { display: inline-block; padding: 6px 12px; font-family: var(--pixel-font-title); font-size: 8px; color: var(--pixel-text-dim) !important; text-decoration: none; border: 2px solid transparent; text-transform: uppercase; letter-spacing: 1px; transition: all var(--pixel-transition);
+  &:hover, &.active { color: var(--pixel-bg) !important; background: var(--pixel-primary); border-color: var(--pixel-border); }
+}
+.header-actions { display: flex; align-items: center; gap: 0.5rem; }
+.mobile-menu-btn { display: none; flex-direction: column; gap: 4px; padding: 8px; background: none; border: 2px solid var(--pixel-border); cursor: pointer; span { display: block; width: 20px; height: 3px; background: var(--pixel-text); } }
+@media screen and (max-width: 768px) { .nav-desktop { display: none; } .mobile-menu-btn { display: flex; } }
+</style>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn');
+  const sidebar = document.getElementById('mobile-sidebar');
+  if (btn && sidebar) { btn.addEventListener('click', () => { sidebar.classList.toggle('open'); }); }
+</script>

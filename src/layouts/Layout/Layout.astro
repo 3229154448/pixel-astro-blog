@@ -1,0 +1,32 @@
+---
+import '@/styles/Reset.less';
+import '@/styles/Base.less';
+import Head from '@/components/Head/Head.astro';
+import Header from '@/components/Header/Header.astro';
+import Footer from '@/components/Footer/Footer.astro';
+import BackTop from '@/components/BackTop/BackTop.astro';
+import { siteConfig } from '@/config';
+
+interface Props { title?: string; description?: string; cover?: string; }
+const { title = siteConfig.title, description = siteConfig.description, cover } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <Head title={title} description={description} cover={cover} />
+  <body>
+    <Header />
+    <main class="main-inner">
+      <div class="main-inner-content vh-animation vh-animation-init">
+        <slot />
+      </div>
+    </main>
+    <Footer />
+    <BackTop />
+  </body>
+</html>
+
+<style is:global>
+  .main-inner { width: 100%; max-width: var(--vh-main-max-width); margin: 0 auto; padding: 1.5rem; box-sizing: border-box; min-height: calc(100vh - 200px); }
+  .main-inner-content { display: flex; gap: 1.5rem; }
+  @media screen and (max-width: 768px) { .main-inner-content { flex-direction: column; } }
+</style>

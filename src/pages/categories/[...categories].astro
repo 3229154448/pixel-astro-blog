@@ -1,0 +1,18 @@
+---
+import PageLayout from '@/layouts/PageLayout/PageLayout.astro';
+import ArticleCard from '@/components/ArticleCard/ArticleCard.astro';
+import { getCollection } from 'astro:content';
+import { getReadingTime, getWordCount } from '@/utils';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+  const categories = [...new Set(allPosts.flatMap(p => p.data.categories))];
+  return categories.map(cat => ({ params: { categories: cat }, props: { category: cat, posts: allPosts.filter(p => p.data.categories.includes(cat)) } }));
+}
+const { category, posts } = Astro.props;
+---
+<PageLayout title={`分类: ${category}`}>
+  <h1 class="pixel-page-title">📁 分类 / {category}</h1>
+  <div class="post-list">{posts.map((post: any) => (<ArticleCard title={post.data.title} description={post.data.description} cover={post.data.cover} date={post.data.date} tags={post.data.tags} categories={post.data.categories} readingTime={getReadingTime(post.body||'')} wordCount={getWordCount(post.body||'')} link={`/article/${post.id}`} />))}</div>
+</PageLayout>
+<style lang="less">.pixel-page-title { font-family: var(--pixel-font-title); font-size: 12px; color: var(--pixel-primary); text-shadow: 3px 3px 0 var(--pixel-shadow-color); margin-bottom: 1.5rem; }</style>

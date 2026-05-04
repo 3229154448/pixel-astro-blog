@@ -1,0 +1,16 @@
+---
+interface Props { currentPage: number; totalPages: number; baseUrl?: string; }
+const { currentPage, totalPages, baseUrl = '' } = Astro.props;
+---
+{totalPages > 1 && (
+  <nav class="pagination">
+    {currentPage > 1 && <a href={`${baseUrl}/${currentPage - 1 === 1 ? '' : currentPage - 1}`} class="pixel-btn">◄ 上一页</a>}
+    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+      <a href={page === 1 ? `${baseUrl}/` : `${baseUrl}/${page}`} class:list={['pixel-btn', { active: page === currentPage }]}>{page}</a>
+    ))}
+    {currentPage < totalPages && <a href={`${baseUrl}/${currentPage + 1}`} class="pixel-btn">下一页 ►</a>}
+  </nav>
+)}
+<style lang="less">
+.pagination { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px; margin: 2rem 0; .pixel-btn { font-size: 8px; padding: 6px 10px; background: var(--pixel-card); color: var(--pixel-text-dim); &:hover, &.active { background: var(--pixel-primary); color: var(--pixel-bg); } } }
+</style>
