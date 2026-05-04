@@ -7,24 +7,40 @@ const yearMap = new Map<string, typeof allPosts>();
 allPosts.forEach(post => { const y = getYear(post.data.date); if (!yearMap.has(y)) yearMap.set(y, []); yearMap.get(y)!.push(post); });
 ---
 <div class="archive-page">
-  <h1 class="pixel-page-title">📜 归档</h1>
+  <h1 class="pixel-page-title">📜 昔日归档</h1>
   <div class="archive-list">
     {[...yearMap.entries()].map(([year, posts]) => (
       <div class="archive-year">
-        <h2 class="archive-year-title">◄ {year} ►</h2>
-        <ul class="archive-posts">
-          {posts.map(post => (<li class="archive-item"><span class="archive-date">{formatDate(post.data.date)}</span><a href={`/article/${post.id}`} class="archive-link">{post.data.title}</a></li>))}
-        </ul>
+        <h2 class="archive-year-title pixel-font">◄ {year} ►</h2>
+        <div class="archive-posts">
+          {posts.map(post => (
+            <a href={`/article/${post.id}`} class="archive-item">
+              <span class="archive-date">{formatDate(post.data.date)}</span>
+              <span class="archive-title">{post.data.title}</span>
+              {post.data.categories[0] && <span class="category-pixel">{post.data.categories[0]}</span>}
+            </a>
+          ))}
+        </div>
       </div>
     ))}
   </div>
 </div>
+
 <style lang="less">
-.pixel-page-title { font-family: var(--pixel-font-title); font-size: 14px; color: var(--pixel-primary); text-shadow: 3px 3px 0 var(--pixel-shadow-color); margin-bottom: 1.5rem; }
+.pixel-page-title { font-family: var(--pixel-font-title); font-size: 16px; color: var(--pixel-dark); text-shadow: 3px 3px 0 var(--pixel-shadow-color); margin-bottom: 1.5rem; }
 .archive-year { margin-bottom: 2rem; }
-.archive-year-title { font-family: var(--pixel-font-title); font-size: 11px; color: var(--pixel-secondary); padding: 8px 16px; background: var(--pixel-card); border: var(--pixel-border-width) solid var(--pixel-border); box-shadow: var(--pixel-shadow-offset) var(--pixel-shadow-offset) 0 0 var(--pixel-shadow-color); display: inline-block; margin-bottom: 1rem; }
-.archive-posts { list-style: none; padding: 0; }
-.archive-item { display: flex; gap: 1rem; align-items: baseline; padding: 8px 0; border-bottom: 2px dotted var(--pixel-border); }
-.archive-date { font-family: var(--pixel-font-title); font-size: 8px; color: var(--pixel-text-dim); white-space: nowrap; }
-.archive-link { font-size: 18px; color: var(--pixel-text); &:hover { color: var(--pixel-primary); } }
+.archive-year-title { font-size: 18px; color: var(--pixel-accent); text-shadow: 3px 3px 0 var(--pixel-dark); margin-bottom: 1rem; }
+.archive-posts { margin-left: 1rem; border-left: 4px solid var(--pixel-dark); padding-left: 1rem; display: flex; flex-direction: column; gap: 0; }
+.archive-item {
+  display: flex; align-items: center; gap: 12px; padding: 10px;
+  border: 2px solid transparent; transition: all 0.2s; text-decoration: none; color: var(--pixel-dark);
+  &:hover { background: var(--pixel-bg); border-color: var(--pixel-dark); }
+  &:hover .archive-title { color: var(--pixel-accent); }
+}
+.archive-date { font-size: 14px; color: var(--pixel-text-dim); width: 70px; flex-shrink: 0; }
+.archive-title { flex: 1; font-size: 16px; transition: color 0.2s; }
+.category-pixel {
+  background: var(--pixel-secondary); color: white; font-size: 11px; font-weight: bold;
+  border: 2px solid var(--pixel-dark); box-shadow: 2px 2px 0 0 var(--pixel-dark); padding: 2px 8px; flex-shrink: 0;
+}
 </style>

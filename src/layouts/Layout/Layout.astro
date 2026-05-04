@@ -13,10 +13,18 @@ const { title = siteConfig.title, description = siteConfig.description, cover } 
 <!DOCTYPE html>
 <html lang="zh-CN">
   <Head title={title} description={description} cover={cover} />
-  <body>
+  <body class="pixel-grid crt">
     <Header />
     <main class="main-inner">
       <div class="main-inner-content vh-animation vh-animation-init">
+        <!-- 公告栏 -->
+        <div class="announcement-bar">
+          <div class="ann-icon">📢</div>
+          <div class="ann-content">
+            <h3 class="ann-title">公告</h3>
+            <p class="ann-text">{siteConfig.sidebar.announcement}</p>
+          </div>
+        </div>
         <slot />
       </div>
     </main>
@@ -26,7 +34,23 @@ const { title = siteConfig.title, description = siteConfig.description, cover } 
 </html>
 
 <style is:global>
-  .main-inner { width: 100%; max-width: var(--vh-main-max-width); margin: 0 auto; padding: 1.5rem; box-sizing: border-box; min-height: calc(100vh - 200px); }
-  .main-inner-content { display: flex; gap: 1.5rem; }
-  @media screen and (max-width: 768px) { .main-inner-content { flex-direction: column; } }
+  .main-inner { width: 100%; max-width: var(--vh-main-max-width); margin: 0 auto; padding: 2rem 1.5rem; box-sizing: border-box; min-height: calc(100vh - 200px); }
+  .main-inner-content { display: flex; flex-direction: column; gap: 1.5rem; }
+</style>
+
+<style lang="less">
+.announcement-bar {
+  display: flex; align-items: flex-start; gap: 12px; padding: 1rem 1.25rem;
+  background: rgba(243, 156, 18, 0.2); border-left: 4px solid var(--pixel-yellow);
+  border: 4px solid var(--pixel-dark); border-left: 4px solid var(--pixel-yellow);
+  box-shadow: 4px 4px 0 0 var(--pixel-dark);
+}
+.ann-icon {
+  width: 40px; height: 40px; background: var(--pixel-yellow);
+  border: 3px solid var(--pixel-dark); display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.ann-content { flex: 1; }
+.ann-title { font-family: var(--pixel-font-title); font-size: 10px; color: var(--pixel-dark); margin-bottom: 4px; }
+.ann-text { font-size: 15px; color: var(--pixel-text-dim); line-height: 1.6; }
 </style>

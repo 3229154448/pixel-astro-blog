@@ -5,57 +5,216 @@ const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 const categories = [...new Set(allPosts.flatMap(p => p.data.categories))];
 const tags = [...new Set(allPosts.flatMap(p => p.data.tags))];
-const recentPosts = allPosts.slice(0, 5);
+const recentPosts = allPosts.slice(0, 3);
+const catColors = ['var(--pixel-accent)', 'var(--pixel-secondary)', 'var(--pixel-yellow)', 'var(--pixel-purple)', 'var(--pixel-blue)', 'var(--pixel-orange)'];
+const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel-purple)', 'var(--pixel-accent)', 'var(--pixel-green)', 'var(--pixel-blue)', 'var(--pixel-pink)', 'var(--pixel-cyan)', 'var(--pixel-orange)'];
 ---
-<aside class="aside pixel-card">
-  {siteConfig.sidebar.showAnnouncement && (
-    <div class="aside-section">
-      <h3 class="aside-title">📢 公告</h3>
-      <p class="aside-announcement">{siteConfig.sidebar.announcement}</p>
+<aside class="aside">
+  <!-- 个人信息卡 -->
+  <div class="aside-card profile-card">
+    <div class="profile-avatar-wrap">
+      <img src="/assets/images/avatar-default.webp" alt={siteConfig.author} class="profile-avatar" width="96" height="96" />
+      <div class="profile-badge">✓</div>
     </div>
-  )}
-  <div class="aside-section">
-    <h3 class="aside-title">👤 关于</h3>
-    <div class="aside-author">
-      <div class="author-avatar"><img src="/assets/images/avatar-default.webp" alt={siteConfig.author} width="48" height="48" /></div>
-      <div class="author-info">
-        <span class="author-name">{siteConfig.author}</span>
-        <span class="author-motto">{siteConfig.motto}</span>
-      </div>
+    <h3 class="pixel-font profile-name">{siteConfig.author}</h3>
+    <p class="profile-motto">{siteConfig.motto}</p>
+    <div class="profile-stats">
+      <div class="stat-item"><span class="stat-num accent">{allPosts.length}</span><span class="stat-label">文章</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat-item"><span class="stat-num secondary">{categories.length}</span><span class="stat-label">分类</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat-item"><span class="stat-num purple">{tags.length}</span><span class="stat-label">标签</span></div>
+    </div>
+    <div class="profile-social">
+      <a href="https://github.com" target="_blank" class="social-btn github" title="GitHub">GH</a>
+      <a href="#" class="social-btn twitter" title="Twitter">TW</a>
+      <a href="#" class="social-btn email" title="Email">✉</a>
+      <a href="/rss.xml" class="social-btn rss" title="RSS">RSS</a>
     </div>
   </div>
+
+  <!-- 分类 -->
   {siteConfig.sidebar.showCategories && categories.length > 0 && (
-    <div class="aside-section">
-      <h3 class="aside-title">📁 分类</h3>
-      <div class="aside-tags">{categories.map(c => (<a href={`/categories/${c}`} class="pixel-tag">{c}</a>))}</div>
+  <div class="aside-card">
+    <h3 class="aside-title">📁 文章分类</h3>
+    <div class="category-list">
+      {categories.map((cat, i) => (
+        <a href={`/categories/${cat}`} class="category-item">
+          <span class="cat-color" style={`background: ${catColors[i % catColors.length]}`}></span>
+          <span class="cat-name">{cat}</span>
+          <span class="cat-count">{allPosts.filter(p => p.data.categories.includes(cat)).length}</span>
+        </a>
+      ))}
     </div>
+  </div>
   )}
+
+  <!-- 标签云 -->
   {siteConfig.sidebar.showTags && tags.length > 0 && (
-    <div class="aside-section">
-      <h3 class="aside-title">🏷️ 标签</h3>
-      <div class="aside-tags">{tags.map(t => (<a href={`/tag/${t}`} class="pixel-tag">{t}</a>))}</div>
+  <div class="aside-card">
+    <h3 class="aside-title">🏷️ 标签云</h3>
+    <div class="tag-cloud">
+      {tags.map((tag, i) => (
+        <a href={`/tag/${tag}`} class="tag-pixel" style={`background: ${tagColors[i % tagColors.length]}`}>{tag}</a>
+      ))}
     </div>
+  </div>
   )}
+
+  <!-- 推荐文章 -->
   {siteConfig.sidebar.showRecentPosts && recentPosts.length > 0 && (
-    <div class="aside-section">
-      <h3 class="aside-title">📝 最新</h3>
-      <ul class="aside-list">{recentPosts.map(post => (<li><a href={`/article/${post.id}`}>{post.data.title}</a></li>))}</ul>
+  <div class="aside-card">
+    <h3 class="aside-title">⭐ 推荐文章</h3>
+    <div class="rec-list">
+      {recentPosts.map(post => (
+        <a href={`/article/${post.id}`} class="rec-item">
+          <div class="rec-thumb">
+            <img src={post.data.cover || '/assets/images/avatar-default.webp'} alt={post.data.title} width="64" height="64" />
+          </div>
+          <div class="rec-info">
+            <h4 class="rec-title">{post.data.title}</h4>
+            <span class="rec-date">{post.data.date.toLocaleDateString('zh-CN')}</span>
+          </div>
+        </a>
+      ))}
     </div>
+  </div>
   )}
+
+  <!-- 音乐 -->
+  <div class="aside-card">
+    <h3 class="aside-title">🎵 音乐</h3>
+    <div class="music-player">
+      <div class="music-disc">♫</div>
+      <div class="music-info">
+        <div class="music-title">8-Bit Adventure</div>
+        <div class="music-artist">Pixel Artist</div>
+      </div>
+    </div>
+    <div class="music-controls">
+      <button class="pixel-btn music-btn">◁</button>
+      <button class="pixel-btn music-btn play">▶</button>
+      <button class="pixel-btn music-btn">▷</button>
+      <div class="music-bars">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+    <div class="pixel-progress"><div class="pixel-progress-bar" style="width: 45%"></div></div>
+  </div>
 </aside>
 
 <style lang="less">
-.aside { width: var(--vh-aside-width); min-width: var(--vh-aside-width); max-height: calc(100vh - 100px); overflow-y: auto; position: sticky; top: 80px; padding: 1.25rem; }
-.aside-section { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 2px dashed var(--pixel-border); &:last-child { border-bottom: none; } }
-.aside-title { font-family: var(--pixel-font-title); font-size: 9px; color: var(--pixel-primary); margin-bottom: 0.75rem; text-transform: uppercase; }
-.aside-announcement { font-size: 18px; color: var(--pixel-text-dim); line-height: 1.6; }
-.aside-author { display: flex; align-items: center; gap: 0.75rem;
-  .author-avatar { width: 48px; height: 48px; border: 3px solid var(--pixel-primary); box-shadow: 3px 3px 0 0 var(--pixel-shadow-color); img { width: 100%; height: 100%; object-fit: cover; } }
-  .author-info { display: flex; flex-direction: column; gap: 2px; }
-  .author-name { font-family: var(--pixel-font-title); font-size: 9px; color: var(--pixel-primary); }
-  .author-motto { font-size: 16px; color: var(--pixel-text-dim); }
+.aside { width: var(--vh-aside-width); min-width: var(--vh-aside-width); display: flex; flex-direction: column; gap: 1.5rem; }
+.aside-card {
+  background: var(--pixel-bg-grid); border: 4px solid var(--pixel-dark);
+  box-shadow: 6px 6px 0 0 var(--pixel-dark); padding: 1.5rem;
+  transition: all 0.15s ease;
+  &:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 0 var(--pixel-dark); }
 }
-.aside-tags { display: flex; flex-wrap: wrap; gap: 6px; a { text-decoration: none; border-bottom: none; } }
-.aside-list { list-style: none; padding: 0; li { padding: 4px 0; a { font-size: 17px; color: var(--pixel-text-dim); &:hover { color: var(--pixel-primary); } } } }
+.aside-title {
+  font-family: var(--pixel-font-title); font-size: 10px; color: var(--pixel-dark);
+  margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;
+}
+
+/* 个人信息 */
+.profile-card { text-align: center; }
+.profile-avatar-wrap { position: relative; display: inline-block; margin-bottom: 1rem; }
+.profile-avatar {
+  width: 96px; height: 96px; border: 4px solid var(--pixel-dark);
+  box-shadow: 4px 4px 0 0 var(--pixel-dark); image-rendering: pixelated;
+}
+.profile-badge {
+  position: absolute; bottom: -2px; right: -2px;
+  width: 28px; height: 28px; background: var(--pixel-green);
+  border: 3px solid var(--pixel-dark); display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 14px; font-weight: bold;
+}
+.profile-name { font-family: var(--pixel-font-title); font-size: 12px; color: var(--pixel-dark); margin-bottom: 0.5rem; }
+.profile-motto { font-size: 16px; color: var(--pixel-text-dim); margin-bottom: 1.25rem; }
+.profile-stats { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.25rem; }
+.stat-item { text-align: center; }
+.stat-num { font-family: var(--pixel-font-title); font-size: 16px; display: block; &.accent { color: var(--pixel-accent); } &.secondary { color: var(--pixel-secondary); } &.purple { color: var(--pixel-purple); } }
+.stat-label { font-size: 12px; color: var(--pixel-text-dim); }
+.stat-divider { width: 1px; background: rgba(26,26,46,0.2); }
+.profile-social { display: flex; justify-content: center; gap: 10px; }
+.social-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border: 3px solid var(--pixel-dark);
+  box-shadow: 3px 3px 0 0 var(--pixel-dark); color: white;
+  font-family: var(--pixel-font-title); font-size: 9px; text-decoration: none;
+  transition: all 0.15s ease;
+  &.github { background: var(--pixel-dark); }
+  &.twitter { background: var(--pixel-blue); }
+  &.email { background: var(--pixel-pink); }
+  &.rss { background: var(--pixel-orange); }
+  &:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--pixel-dark); }
+}
+
+/* 分类 */
+.category-list { display: flex; flex-direction: column; gap: 4px; }
+.category-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 10px; border: 2px solid transparent; transition: all 0.2s;
+  text-decoration: none; color: var(--pixel-dark);
+  &:hover { background: var(--pixel-bg); border-color: var(--pixel-dark); }
+}
+.cat-color { width: 12px; height: 12px; border: 2px solid var(--pixel-dark); margin-right: 8px; flex-shrink: 0; }
+.cat-name { flex: 1; font-size: 16px; }
+.cat-count {
+  font-family: var(--pixel-font-title); font-size: 9px;
+  background: var(--pixel-bg); border: 2px solid var(--pixel-dark); padding: 2px 6px;
+}
+
+/* 标签云 */
+.tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag-pixel {
+  display: inline-block; padding: 4px 10px; font-size: 13px; font-weight: bold;
+  color: var(--pixel-dark); border: 3px solid var(--pixel-dark);
+  box-shadow: 3px 3px 0 0 var(--pixel-dark); text-decoration: none;
+  transition: all 0.2s;
+  &:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--pixel-dark); background: var(--pixel-accent) !important; color: white !important; }
+}
+
+/* 推荐文章 */
+.rec-list { display: flex; flex-direction: column; gap: 1rem; }
+.rec-item { display: flex; gap: 12px; text-decoration: none; color: var(--pixel-dark); &:hover .rec-title { color: var(--pixel-accent); } }
+.rec-thumb {
+  width: 64px; height: 64px; flex-shrink: 0; overflow: hidden;
+  border: 3px solid var(--pixel-dark); box-shadow: 2px 2px 0 0 var(--pixel-dark);
+  img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+}
+.rec-info { min-width: 0; }
+.rec-title { font-size: 14px; font-weight: bold; transition: color 0.2s; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rec-date { font-size: 12px; color: var(--pixel-text-dim); }
+
+/* 音乐 */
+.music-player { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.music-disc {
+  width: 48px; height: 48px; background: var(--pixel-purple);
+  border: 3px solid var(--pixel-dark); display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 20px; animation: spin 3s linear infinite;
+}
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.music-info { min-width: 0; }
+.music-title { font-size: 15px; font-weight: bold; color: var(--pixel-dark); }
+.music-artist { font-size: 13px; color: var(--pixel-text-dim); }
+.music-controls { display: flex; align-items: center; gap: 4px; margin-bottom: 8px; }
+.music-btn { padding: 4px 8px; background: var(--pixel-dark); color: white; font-size: 12px; &.play { background: var(--pixel-accent); } }
+.music-bars { display: flex; align-items: flex-end; gap: 2px; height: 24px; margin-left: 8px; flex: 1;
+  span { width: 4px; background: var(--pixel-accent); animation: music-wave 0.5s ease-in-out infinite alternate;
+    &:nth-child(1) { height: 8px; animation-delay: 0s; }
+    &:nth-child(2) { height: 16px; animation-delay: 0.1s; }
+    &:nth-child(3) { height: 12px; animation-delay: 0.2s; }
+    &:nth-child(4) { height: 20px; animation-delay: 0.3s; }
+    &:nth-child(5) { height: 10px; animation-delay: 0.15s; }
+  }
+}
+@keyframes music-wave { from { height: 8px; } to { height: 24px; } }
+.pixel-progress { background: var(--pixel-bg); border: 3px solid var(--pixel-dark); height: 12px; overflow: hidden; }
+.pixel-progress-bar {
+  background: repeating-linear-gradient(45deg, var(--pixel-accent), var(--pixel-accent) 10px, #c0392b 10px, #c0392b 20px);
+  height: 100%; border-right: 3px solid var(--pixel-dark);
+}
+
 @media screen and (max-width: 768px) { .aside { display: none; } }
 </style>

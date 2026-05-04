@@ -4,13 +4,25 @@ const { currentPage, totalPages, baseUrl = '' } = Astro.props;
 ---
 {totalPages > 1 && (
   <nav class="pagination">
-    {currentPage > 1 && <a href={`${baseUrl}/${currentPage - 1 === 1 ? '' : currentPage - 1}`} class="pixel-btn">◄ 上一页</a>}
+    <button class="pixel-btn page-btn" disabled={currentPage <= 1}>◁</button>
     {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-      <a href={page === 1 ? `${baseUrl}/` : `${baseUrl}/${page}`} class:list={['pixel-btn', { active: page === currentPage }]}>{page}</a>
+      <button class:list={['pixel-btn', 'page-btn', { active: page === currentPage }]}>
+        {page}
+      </button>
     ))}
-    {currentPage < totalPages && <a href={`${baseUrl}/${currentPage + 1}`} class="pixel-btn">下一页 ►</a>}
+    <button class="pixel-btn page-btn" disabled={currentPage >= totalPages}>▷</button>
   </nav>
 )}
+
 <style lang="less">
-.pagination { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px; margin: 2rem 0; .pixel-btn { font-size: 8px; padding: 6px 10px; background: var(--pixel-card); color: var(--pixel-text-dim); &:hover, &.active { background: var(--pixel-primary); color: var(--pixel-bg); } } }
+.pagination { display: flex; justify-content: center; gap: 4px; margin: 2.5rem 0; flex-wrap: wrap; }
+.page-btn {
+  padding: 8px 14px; background: var(--pixel-bg-grid); color: var(--pixel-dark);
+  font-family: var(--pixel-font-title); font-size: 10px;
+  border: 3px solid var(--pixel-dark); box-shadow: 3px 3px 0 0 var(--pixel-dark);
+  &:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--pixel-dark); }
+  &:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: 0 0 0 0 var(--pixel-dark); }
+  &.active { background: var(--pixel-accent); color: white; }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
 </style>

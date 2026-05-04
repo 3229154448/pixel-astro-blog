@@ -2,12 +2,36 @@
 import { siteConfig } from '@/config';
 ---
 <aside class="mobile-sidebar" id="mobile-sidebar">
+  <div class="mobile-header">
+    <span class="pixel-font">MENU</span>
+    <button class="pixel-btn close-btn" onclick="document.getElementById('mobile-sidebar').classList.remove('open')">✕</button>
+  </div>
   <nav class="mobile-nav">
-    {siteConfig.navbar.map(item => (<a href={item.link} class="mobile-nav-link">{item.name}</a>))}
+    {siteConfig.navbar.map(item => (
+      <a href={item.link} class="mobile-nav-link" onclick="document.getElementById('mobile-sidebar').classList.remove('open')">{item.name}</a>
+    ))}
   </nav>
 </aside>
+
 <style lang="less">
-.mobile-sidebar { position: fixed; top: 60px; left: -100%; width: 280px; height: calc(100vh - 60px); background: var(--pixel-card); border-right: var(--pixel-border-width) solid var(--pixel-border); box-shadow: 4px 0 0 0 var(--pixel-shadow-color); z-index: 99; transition: left 0.3s ease; overflow-y: auto; padding: 1rem; &.open { left: 0; } }
+.mobile-sidebar {
+  position: fixed; top: 0; left: -100%; width: 288px; height: 100vh;
+  background: var(--pixel-bg); border-right: 4px solid var(--pixel-dark);
+  box-shadow: 6px 0 0 0 var(--pixel-dark); z-index: 99;
+  transition: left 0.3s ease; overflow-y: auto; padding: 1.5rem;
+  &.open { left: 0; }
+}
+.mobile-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;
+  .pixel-font { font-family: var(--pixel-font-title); font-size: 12px; color: var(--pixel-dark); }
+  .close-btn { padding: 6px 10px; background: var(--pixel-accent); color: white; font-size: 14px; }
+}
 .mobile-nav { display: flex; flex-direction: column; gap: 4px; }
-.mobile-nav-link { display: block; padding: 10px 16px; font-family: var(--pixel-font-title); font-size: 9px; color: var(--pixel-text-dim) !important; border: 2px solid var(--pixel-border); &:hover { background: var(--pixel-primary); color: var(--pixel-bg) !important; } }
+.mobile-nav-link {
+  display: block; padding: 12px 16px;
+  font-family: var(--pixel-font-body); font-size: 18px; font-weight: bold;
+  color: var(--pixel-dark); text-decoration: none;
+  border: 3px solid var(--pixel-dark); background: var(--pixel-bg-grid);
+  &:hover { background: var(--pixel-accent); color: white; }
+}
 </style>

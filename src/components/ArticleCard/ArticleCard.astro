@@ -2,22 +2,94 @@
 import { formatDate } from '@/utils';
 interface Props { title: string; description: string; cover?: string; date: Date; tags: string[]; categories: string[]; readingTime?: number; wordCount?: number; link: string; pin?: boolean; }
 const { title, description, cover, date, tags, categories, readingTime, wordCount, link, pin } = Astro.props;
+const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel-purple)', 'var(--pixel-accent)', 'var(--pixel-green)', 'var(--pixel-blue)', 'var(--pixel-pink)', 'var(--pixel-cyan)'];
 ---
-<a href={link} class="article-card article-base pixel-card">
-  {pin && <span class="pin-badge">📌 置顶</span>}
-  {cover && <div class="article-cover"><img src={cover} alt={title} loading="lazy" /></div>}
-  <div class="article-info">
-    <h2 class="article-title">{title}</h2>
-    <p class="article-desc">{description}</p>
-    <div class="article-meta">
-      <span>📅 {formatDate(date)}</span>
-      {readingTime && <span>⏱️ {readingTime}分钟</span>}
-      {wordCount && <span>📝 {wordCount}字</span>}
+<a href={link} class="article-card pixel-card">
+  <div class="card-cover">
+    <div class="cover-wrap">
+      <img src={cover || '/assets/images/avatar-default.webp'} alt={title} loading="lazy" />
+      {pin && <span class="top-badge">置顶</span>}
+      <div class="cover-bottom">
+        {readingTime && <span class="read-badge">⏱ {readingTime}分钟</span>}
+        {wordCount && <span class="word-badge">📝 {wordCount}字</span>}
+      </div>
     </div>
-    <div class="article-tags">{tags.map(tag => (<span class="pixel-tag">{tag}</span>))}</div>
+  </div>
+  <div class="card-content">
+    <div class="card-meta">
+      {categories.length > 0 && <span class="category-pixel">{categories[0]}</span>}
+      <span class="meta-date">📅 {formatDate(date)}</span>
+    </div>
+    <h2 class="card-title">{title}</h2>
+    <p class="card-desc">{description}</p>
+    <div class="card-footer">
+      <div class="card-tags">
+        {tags.map((tag, i) => (<span class="tag-pixel" style={`background: ${tagColors[i % tagColors.length]}`}>{tag}</span>))}
+      </div>
+      <span class="read-btn pixel-btn">阅读 ▸</span>
+    </div>
   </div>
 </a>
+
 <style lang="less">
-.article-card { display: block; margin-bottom: 1.5rem; text-decoration: none; border-bottom: none; position: relative; overflow: hidden; }
-.pin-badge { position: absolute; top: 8px; right: 8px; z-index: 2; font-family: var(--pixel-font-title); font-size: 8px; padding: 4px 8px; background: var(--pixel-secondary); color: var(--pixel-bg); border: 2px solid var(--pixel-border); }
+.article-card {
+  display: flex; gap: 1.25rem; padding: 1.25rem;
+  text-decoration: none; border-bottom: none; position: relative;
+  @media (max-width: 768px) { flex-direction: column; }
+}
+.card-cover { width: 40%; flex-shrink: 0; @media (max-width: 768px) { width: 100%; } }
+.cover-wrap {
+  position: relative; overflow: hidden; border: 4px solid var(--pixel-dark);
+  img { width: 100%; height: 200px; object-fit: cover; image-rendering: pixelated; transition: transform 0.5s; }
+  &:hover img { transform: scale(1.1); }
+}
+.top-badge {
+  position: absolute; top: 8px; left: 8px;
+  background: var(--pixel-accent); color: white; font-size: 11px; font-weight: bold;
+  border: 2px solid var(--pixel-dark); box-shadow: 2px 2px 0 0 var(--pixel-dark);
+  padding: 2px 8px; animation: pixel-bounce 2s infinite;
+}
+@keyframes pixel-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.cover-bottom {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  padding: 8px; display: flex; gap: 6px;
+}
+.read-badge, .word-badge {
+  font-size: 11px; padding: 2px 8px; color: white; font-weight: bold;
+  border: 2px solid var(--pixel-dark); box-shadow: 2px 2px 0 0 var(--pixel-dark);
+}
+.read-badge { background: var(--pixel-blue); }
+.word-badge { background: var(--pixel-purple); }
+.card-content { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.category-pixel {
+  background: var(--pixel-secondary); color: white; font-size: 12px; font-weight: bold;
+  border: 2px solid var(--pixel-dark); box-shadow: 2px 2px 0 0 var(--pixel-dark); padding: 2px 8px;
+}
+.meta-date { font-size: 14px; color: var(--pixel-text-dim); }
+.card-title {
+  font-size: 20px; font-weight: bold; color: var(--pixel-dark); line-height: 1.5;
+  margin-bottom: 8px; transition: color 0.2s;
+  &:hover { color: var(--pixel-accent); }
+}
+.card-desc {
+  font-size: 15px; color: var(--pixel-text-dim); line-height: 1.6; margin-bottom: 1rem;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.card-footer { margin-top: auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag-pixel {
+  display: inline-block; padding: 3px 8px; font-size: 12px; font-weight: bold;
+  color: var(--pixel-dark); border: 3px solid var(--pixel-dark);
+  box-shadow: 2px 2px 0 0 var(--pixel-dark); transition: all 0.2s;
+  &:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 0 var(--pixel-dark); }
+}
+.read-btn {
+  background: var(--pixel-blue); color: white; font-family: var(--pixel-font-body);
+  font-size: 14px; padding: 6px 14px; border: 3px solid var(--pixel-dark);
+  box-shadow: 3px 3px 0 0 var(--pixel-dark); cursor: pointer;
+  &:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--pixel-dark); }
+  &:active { transform: translate(3px, 3px); box-shadow: 0 0 0 0 var(--pixel-dark); }
+}
 </style>
