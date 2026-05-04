@@ -1,0 +1,244 @@
+---
+import { withBase } from '@/utils/path';
+
+const playlist = [
+  { id: 'super-mario', title: '超级玛丽', subtitle: 'Super Mario Bros', year: '1985', color: '#e74c3c', emoji: '🍄' },
+  { id: 'contra', title: '魂斗罗', subtitle: 'Contra', year: '1987', color: '#27ae60', emoji: '🔫' },
+  { id: 'zelda', title: '塞尔达传说', subtitle: 'The Legend of Zelda', year: '1986', color: '#3498db', emoji: '🗡️' },
+  { id: 'tetris', title: '俄罗斯方块', subtitle: 'Tetris', year: '1984', color: '#9b59b6', emoji: '🧱' },
+  { id: 'pac-man', title: '吃豆人', subtitle: 'Pac-Man', year: '1980', color: '#f39c12', emoji: '🟡' },
+];
+
+const playlistJson = JSON.stringify(playlist.map(p => ({
+  ...p,
+  src: withBase(`/assets/music/${p.id}.mp3`),
+})));
+---
+<div class="music-player-wrapper" id="music-player">
+  <div class="music-now-playing">
+    <div class="music-disc" id="music-disc">♫</div>
+    <div class="music-info">
+      <div class="music-title" id="music-title">🎵 选择曲目</div>
+      <div class="music-subtitle" id="music-subtitle">NES Classic BGM</div>
+    </div>
+  </div>
+
+  <div class="music-progress-wrap">
+    <span class="time-current" id="time-current">0:00</span>
+    <div class="pixel-progress" id="progress-bar">
+      <div class="pixel-progress-bar" id="progress-fill" style="width: 0%"></div>
+    </div>
+    <span class="time-total" id="time-total">0:00</span>
+  </div>
+
+  <div class="music-controls">
+    <button class="ctrl-btn" id="btn-prev" title="上一首">◁◁</button>
+    <button class="ctrl-btn play-btn" id="btn-play" title="播放">▶</button>
+    <button class="ctrl-btn" id="btn-next" title="下一首">▷▷</button>
+    <div class="volume-wrap">
+      <span class="volume-icon" id="volume-icon">🔊</span>
+      <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="60" />
+    </div>
+    <button class="ctrl-btn loop-btn" id="btn-loop" title="循环模式">🔁</button>
+  </div>
+
+  <div class="playlist" id="playlist">
+    <div class="playlist-header pixel-font">♪ PLAYLIST ♪</div>
+    {playlist.map((track, i) => (
+      <button class:list={['playlist-item', { first: i === 0 }]} data-index={i}>
+        <span class="track-emoji">{track.emoji}</span>
+        <span class="track-info">
+          <span class="track-name">{track.title}</span>
+          <span class="track-sub">{track.subtitle} ({track.year})</span>
+        </span>
+        <span class="track-color" style={`background: ${track.color}`}></span>
+      </button>
+    ))}
+  </div>
+
+  <audio id="audio-player" preload="none"></audio>
+</div>
+
+<style lang="less">
+.music-player-wrapper { user-select: none; }
+.music-now-playing { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.music-disc {
+  width: 48px; height: 48px; background: var(--pixel-purple);
+  border: 3px solid var(--pixel-dark); display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 20px; flex-shrink: 0;
+  &.spinning { animation: spin 2s linear infinite; }
+}
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.music-info { min-width: 0; }
+.music-title { font-size: 15px; font-weight: bold; color: var(--pixel-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.music-subtitle { font-size: 12px; color: var(--pixel-text-dim); }
+
+.music-progress-wrap { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+.time-current, .time-total { font-family: var(--pixel-font-title); font-size: 8px; color: var(--pixel-text-dim); min-width: 30px; }
+.time-current { text-align: right; }
+.pixel-progress { background: var(--pixel-bg); border: 3px solid var(--pixel-dark); height: 10px; overflow: hidden; flex: 1; cursor: pointer; position: relative; }
+.pixel-progress-bar {
+  background: repeating-linear-gradient(90deg, var(--pixel-accent), var(--pixel-accent) 4px, #c0392b 4px, #c0392b 8px);
+  height: 100%; transition: width 0.3s; border-right: 2px solid var(--pixel-dark);
+}
+
+.music-controls { display: flex; align-items: center; gap: 4px; margin-bottom: 12px; flex-wrap: wrap; }
+.ctrl-btn {
+  padding: 5px 8px; background: var(--pixel-dark); color: white; font-size: 13px;
+  border: 2px solid var(--pixel-dark); box-shadow: 2px 2px 0 0 rgba(26,26,46,0.3);
+  cursor: pointer; transition: all 0.1s;
+  &:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 0 rgba(26,26,46,0.3); }
+  &:active { transform: translate(2px, 2px); box-shadow: none; }
+}
+.play-btn { background: var(--pixel-accent); padding: 5px 12px; font-size: 16px; }
+.loop-btn { font-size: 14px; &.active { background: var(--pixel-secondary); } }
+
+.volume-wrap { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+.volume-icon { font-size: 16px; cursor: pointer; }
+.volume-slider {
+  width: 60px; height: 6px; -webkit-appearance: none; appearance: none;
+  background: var(--pixel-bg); border: 2px solid var(--pixel-dark); outline: none;
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 14px; height: 14px;
+    background: var(--pixel-accent); border: 2px solid var(--pixel-dark); cursor: pointer;
+  }
+}
+
+.playlist { display: flex; flex-direction: column; gap: 2px; }
+.playlist-header { font-size: 8px; color: var(--pixel-text-dim); text-align: center; padding: 4px 0; }
+.playlist-item {
+  display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+  background: var(--pixel-bg); border: 2px solid transparent; cursor: pointer;
+  text-align: left; transition: all 0.15s; color: var(--pixel-dark);
+  &:hover { border-color: var(--pixel-dark); background: var(--pixel-bg-grid); }
+  &.active { background: rgba(231,76,60,0.15); border-color: var(--pixel-accent); }
+}
+.track-emoji { font-size: 20px; flex-shrink: 0; }
+.track-info { flex: 1; min-width: 0; }
+.track-name { font-size: 14px; font-weight: bold; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.track-sub { font-size: 11px; color: var(--pixel-text-dim); display: block; }
+.track-color { width: 8px; height: 8px; border: 2px solid var(--pixel-dark); flex-shrink: 0; }
+</style>
+
+<script define:vars={{ playlistJson, baseUrl: '/pixel-astro-blog' }}>
+  const playlist = JSON.parse(playlistJson);
+  const audio = document.getElementById('audio-player');
+  const disc = document.getElementById('music-disc');
+  const titleEl = document.getElementById('music-title');
+  const subtitleEl = document.getElementById('music-subtitle');
+  const timeCurrent = document.getElementById('time-current');
+  const timeTotal = document.getElementById('time-total');
+  const progressFill = document.getElementById('progress-fill');
+  const progressBar = document.getElementById('progress-bar');
+  const btnPlay = document.getElementById('btn-play');
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+  const btnLoop = document.getElementById('btn-loop');
+  const volumeSlider = document.getElementById('volume-slider');
+  const volumeIcon = document.getElementById('volume-icon');
+  const playlistItems = document.querySelectorAll('.playlist-item');
+
+  let currentIndex = 0;
+  let isPlaying = false;
+  let loopMode = 'all'; // all, one, none
+  const loopModes = ['all', 'one', 'none'];
+  const loopIcons = { all: '🔁', one: '🔂', none: '➡️' };
+
+  function formatTime(s) {
+    if (isNaN(s)) return '0:00';
+    const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+    return m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+
+  function loadTrack(index) {
+    currentIndex = index;
+    const track = playlist[index];
+    audio.src = track.src;
+    audio.load();
+    titleEl.textContent = track.emoji + ' ' + track.title;
+    subtitleEl.textContent = track.subtitle + ' (' + track.year + ')';
+    playlistItems.forEach((el, i) => el.classList.toggle('active', i === index));
+  }
+
+  function togglePlay() {
+    if (isPlaying) {
+      audio.pause();
+      disc.classList.remove('spinning');
+      btnPlay.textContent = '▶';
+      isPlaying = false;
+    } else {
+      if (!audio.src || audio.src === '') loadTrack(currentIndex);
+      audio.play().catch(() => {});
+      disc.classList.add('spinning');
+      btnPlay.textContent = '⏸';
+      isPlaying = true;
+    }
+  }
+
+  function nextTrack() {
+    if (loopMode === 'one') { audio.currentTime = 0; audio.play(); return; }
+    currentIndex = (currentIndex + 1) % playlist.length;
+    loadTrack(currentIndex);
+    if (isPlaying) audio.play().catch(() => {});
+  }
+
+  function prevTrack() {
+    if (audio.currentTime > 3) { audio.currentTime = 0; return; }
+    currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+    loadTrack(currentIndex);
+    if (isPlaying) audio.play().catch(() => {});
+  }
+
+  audio.addEventListener('timeupdate', () => {
+    if (audio.duration) {
+      const pct = (audio.currentTime / audio.duration) * 100;
+      progressFill.style.width = pct + '%';
+      timeCurrent.textContent = formatTime(audio.currentTime);
+      timeTotal.textContent = formatTime(audio.duration);
+    }
+  });
+
+  audio.addEventListener('ended', () => {
+    if (loopMode === 'one') { audio.currentTime = 0; audio.play(); }
+    else if (loopMode === 'all' || currentIndex < playlist.length - 1) { nextTrack(); }
+    else { isPlaying = false; btnPlay.textContent = '▶'; disc.classList.remove('spinning'); }
+  });
+
+  progressBar.addEventListener('click', (e) => {
+    const rect = progressBar.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    if (audio.duration) audio.currentTime = pct * audio.duration;
+  });
+
+  btnPlay.addEventListener('click', togglePlay);
+  btnNext.addEventListener('click', nextTrack);
+  btnPrev.addEventListener('click', prevTrack);
+
+  btnLoop.addEventListener('click', () => {
+    const idx = (loopModes.indexOf(loopMode) + 1) % loopModes.length;
+    loopMode = loopModes[idx];
+    btnLoop.textContent = loopIcons[loopMode];
+    btnLoop.classList.toggle('active', loopMode !== 'none');
+  });
+
+  volumeSlider.addEventListener('input', () => {
+    audio.volume = volumeSlider.value / 100;
+    volumeIcon.textContent = audio.volume === 0 ? '🔇' : audio.volume < 0.4 ? '🔉' : '🔊';
+  });
+  audio.volume = 0.6;
+
+  volumeIcon.addEventListener('click', () => {
+    if (audio.volume > 0) { audio._prevVol = audio.volume; audio.volume = 0; volumeSlider.value = 0; volumeIcon.textContent = '🔇'; }
+    else { audio.volume = audio._prevVol || 0.6; volumeSlider.value = audio.volume * 100; volumeIcon.textContent = '🔊'; }
+  });
+
+  playlistItems.forEach((el, i) => {
+    el.addEventListener('click', () => {
+      loadTrack(i);
+      audio.play().then(() => { isPlaying = true; btnPlay.textContent = '⏸'; disc.classList.add('spinning'); }).catch(() => {});
+    });
+  });
+
+  // Auto-load first track info
+  loadTrack(0);
+</script>

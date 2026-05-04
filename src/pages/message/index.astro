@@ -1,14 +1,423 @@
 ---
 import PageLayout from '@/layouts/PageLayout/PageLayout.astro';
-import Comment from '@/components/Comment/Comment.astro';
+import { withBase } from '@/utils/path';
 ---
 <PageLayout title="留言板">
-  <h1 class="pixel-page-title">✉️ 留言板</h1>
-  <div class="message-intro pixel-card" style="padding: 1.5rem;">
-    <p style="font-size: 20px; color: var(--pixel-text); line-height: 1.8;">
-      欢迎来到像素小站的留言板！🎮<br/>有什么想说的，尽管留言吧！<br/>⚠️ 请友善交流，保持像素世界的和平！
-    </p>
+  <div class="message-board">
+    <!-- 标题区 -->
+    <div class="board-header">
+      <h1 class="pixel-page-title">✉️ 留言板</h1>
+      <div class="board-stats-row">
+        <div class="mini-stat"><span class="mini-icon">💬</span><span class="mini-num accent" id="total-msg">0</span> 条留言</div>
+        <div class="mini-stat"><span class="mini-icon">🌟</span><span class="mini-num secondary" id="today-msg">0</span> 今日新增</div>
+        <div class="mini-stat"><span class="mini-icon">👤</span><span class="mini-num purple" id="total-users">0</span> 位冒险者</div>
+      </div>
+    </div>
+
+    <!-- 公告横幅 -->
+    <div class="board-notice pixel-card">
+      <div class="notice-icon">🎮</div>
+      <div class="notice-text">
+        <strong>欢迎来到像素小站留言板！</strong>
+        <p>这里是冒险者们的休息区 ☕ 留下你的足迹吧！</p>
+        <span class="notice-rule">⚠️ 友善交流 · 保持像素世界的和平 · 禁止广告</span>
+      </div>
+    </div>
+
+    <!-- 留言输入区 -->
+    <div class="message-form pixel-card">
+      <h3 class="form-title pixel-font">✏️ 写留言</h3>
+      <div class="form-grid">
+        <div class="form-field">
+          <label class="field-label pixel-font">昵称 *</label>
+          <input type="text" class="pixel-input" id="msg-name" placeholder="冒险者名字..." maxlength="20" />
+        </div>
+        <div class="form-field">
+          <label class="field-label pixel-font">邮箱</label>
+          <input type="email" class="pixel-input" id="msg-email" placeholder="your@email.com (不公开)" />
+        </div>
+      </div>
+      <div class="form-field full">
+        <label class="field-label pixel-font">内容 *</label>
+        <textarea class="pixel-input pixel-textarea" id="msg-content" placeholder="说点什么吧... 支持 Shift+Enter 换行" rows="4" maxlength="500"></textarea>
+        <div class="field-footer">
+          <span class="char-count"><span id="char-num">0</span>/500</span>
+          <span class="preview-toggle pixel-font" id="preview-toggle">预览</span>
+        </div>
+      </div>
+
+      <!-- 心情选择 -->
+      <div class="mood-section">
+        <span class="mood-label pixel-font">心情</span>
+        <div class="mood-picker" id="mood-picker">
+          <button class="mood-btn active" data-mood="😊">😊</button>
+          <button class="mood-btn" data-mood="🎮">🎮</button>
+          <button class="mood-btn" data-mood="🔥">🔥</button>
+          <button class="mood-btn" data-mood="💡">💡</button>
+          <button class="mood-btn" data-mood="❤️">❤️</button>
+          <button class="mood-btn" data-mood="🤔">🤔</button>
+          <button class="mood-btn" data-mood="🎉">🎉</button>
+          <button class="mood-btn" data-mood="😴">😴</button>
+          <button class="mood-btn" data-mood="👀">👀</button>
+          <button class="mood-btn" data-mood="🎨">🎨</button>
+          <button class="mood-btn" data-mood="🚀">🚀</button>
+          <button class="mood-btn" data-mood="🐱">🐱</button>
+        </div>
+      </div>
+
+      <!-- 颜色选择 -->
+      <div class="color-section">
+        <span class="color-label pixel-font">颜色</span>
+        <div class="color-picker" id="color-picker">
+          <button class="color-btn active" data-color="#e74c3c" style="background:#e74c3c"></button>
+          <button class="color-btn" data-color="#27ae60" style="background:#27ae60"></button>
+          <button class="color-btn" data-color="#3498db" style="background:#3498db"></button>
+          <button class="color-btn" data-color="#9b59b6" style="background:#9b59b6"></button>
+          <button class="color-btn" data-color="#f39c12" style="background:#f39c12"></button>
+          <button class="color-btn" data-color="#1abc9c" style="background:#1abc9c"></button>
+          <button class="color-btn" data-color="#e67e22" style="background:#e67e22"></button>
+          <button class="color-btn" data-color="#1a1a2e" style="background:#1a1a2e"></button>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="pixel-btn clear-btn" id="msg-clear">🗑️ 清空</button>
+        <button class="pixel-btn submit-btn" id="msg-submit">📤 提交留言</button>
+      </div>
+    </div>
+
+    <!-- 留言列表 -->
+    <div class="message-list-header">
+      <h3 class="pixel-font">💬 全部留言</h3>
+      <div class="sort-btns">
+        <button class="sort-btn active" data-sort="newest">最新</button>
+        <button class="sort-btn" data-sort="hottest">最热</button>
+      </div>
+    </div>
+
+    <div class="message-list" id="message-list">
+      <div class="empty-state pixel-card" id="empty-state" style="display:none">
+        <div class="empty-pixel">◼◼◼</div>
+        <p class="pixel-font empty-title">NO MESSAGE YET!</p>
+        <p class="empty-desc">成为第一个留言的冒险者吧！</p>
+      </div>
+    </div>
+
+    <!-- 留言模板 -->
+    <template id="msg-template">
+      <div class="message-item pixel-card">
+        <div class="msg-header">
+          <div class="msg-avatar"></div>
+          <div class="msg-user-info">
+            <span class="msg-name"></span>
+            <span class="msg-time"></span>
+          </div>
+          <span class="msg-mood"></span>
+          <span class="msg-tag pixel-font"></span>
+        </div>
+        <div class="msg-body"></div>
+        <div class="msg-footer">
+          <button class="msg-action like-btn" data-likes="0">
+            <span class="action-icon">❤️</span><span class="like-count">0</span>
+          </button>
+          <button class="msg-action reply-btn">💬 回复</button>
+          <button class="msg-action delete-btn">🗑️ 删除</button>
+        </div>
+        <!-- 回复区域 -->
+        <div class="reply-area" style="display:none">
+          <div class="reply-list"></div>
+          <div class="reply-input-wrap">
+            <input type="text" class="pixel-input reply-input" placeholder="回复..." maxlength="200" />
+            <button class="pixel-btn reply-submit-btn">发送</button>
+          </div>
+        </div>
+      </div>
+    </template>
   </div>
-  <Comment />
 </PageLayout>
-<style lang="less">.pixel-page-title { font-family: var(--pixel-font-title); font-size: 12px; color: var(--pixel-primary); text-shadow: 3px 3px 0 var(--pixel-shadow-color); margin-bottom: 1.5rem; }</style>
+
+<style lang="less">
+.pixel-page-title { font-family: var(--pixel-font-title); font-size: 16px; color: var(--pixel-dark); text-shadow: 3px 3px 0 var(--pixel-shadow-color); margin-bottom: 0.5rem; }
+.board-header { margin-bottom: 0; }
+.board-stats-row { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.mini-stat { font-size: 14px; color: var(--pixel-text-dim); display: flex; align-items: center; gap: 4px; }
+.mini-icon { font-size: 18px; }
+.mini-num { font-family: var(--pixel-font-title); font-size: 14px; &.accent { color: var(--pixel-accent); } &.secondary { color: var(--pixel-secondary); } &.purple { color: var(--pixel-purple); } }
+
+.board-notice { display: flex; align-items: flex-start; gap: 1rem; padding: 1.25rem; border-left: 4px solid var(--pixel-yellow); }
+.notice-icon { font-size: 36px; flex-shrink: 0; }
+.notice-text { strong { font-size: 17px; color: var(--pixel-dark); display: block; margin-bottom: 4px; } p { font-size: 15px; color: var(--pixel-text-dim); margin: 4px 0; } }
+.notice-rule { font-size: 12px; color: var(--pixel-accent); font-weight: bold; }
+
+.message-board { display: flex; flex-direction: column; gap: 1.5rem; }
+.message-form { padding: 1.5rem; }
+.form-title { font-size: 11px; color: var(--pixel-dark); margin-bottom: 1rem; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; @media (max-width: 600px) { grid-template-columns: 1fr; } }
+.form-field { display: flex; flex-direction: column; gap: 6px; &.full { margin-top: 1rem; } }
+.field-label { font-size: 9px; color: var(--pixel-text-dim); }
+.pixel-input { font-family: var(--pixel-font-body); font-size: 16px; padding: 10px 12px; background: var(--pixel-bg); border: 3px solid var(--pixel-dark); box-shadow: 3px 3px 0 0 var(--pixel-dark); color: var(--pixel-dark); outline: none; transition: all 0.15s;
+  &:focus { border-color: var(--pixel-accent); box-shadow: 4px 4px 0 0 var(--pixel-accent); }
+  &::placeholder { color: rgba(26,26,46,0.3); }
+}
+.pixel-textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+.field-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+.char-count { font-family: var(--pixel-font-title); font-size: 9px; color: var(--pixel-text-dim); }
+.preview-toggle { font-size: 8px; color: var(--pixel-blue); cursor: pointer; &:hover { color: var(--pixel-accent); } }
+
+.mood-section, .color-section { display: flex; align-items: center; gap: 8px; margin-top: 1rem; flex-wrap: wrap; }
+.mood-label, .color-label { font-size: 9px; color: var(--pixel-text-dim); }
+.mood-picker, .color-picker { display: flex; gap: 4px; flex-wrap: wrap; }
+.mood-btn {
+  width: 32px; height: 32px; font-size: 18px; border: 2px solid var(--pixel-dark);
+  background: var(--pixel-bg); cursor: pointer; transition: all 0.15s; padding: 0;
+  &:hover { transform: scale(1.15); }
+  &.active { border-width: 3px; box-shadow: 2px 2px 0 0 var(--pixel-dark); background: var(--pixel-yellow); }
+}
+.color-btn {
+  width: 28px; height: 28px; border: 3px solid var(--pixel-dark); cursor: pointer;
+  transition: all 0.15s; padding: 0;
+  &:hover { transform: scale(1.15); }
+  &.active { box-shadow: 3px 3px 0 0 var(--pixel-dark); transform: translate(-1px, -1px); }
+}
+
+.form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.25rem; }
+.clear-btn { background: var(--pixel-text-dim); color: white; }
+.submit-btn { background: var(--pixel-accent); color: white; font-weight: bold;
+  &:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 0 var(--pixel-dark); }
+  &:active { transform: translate(3px, 3px); box-shadow: none; }
+}
+
+.message-list-header { display: flex; justify-content: space-between; align-items: center; }
+.message-list-header .pixel-font { font-size: 11px; color: var(--pixel-dark); }
+.sort-btns { display: flex; gap: 4px; }
+.sort-btn { padding: 4px 10px; font-size: 13px; background: var(--pixel-bg); border: 2px solid var(--pixel-dark); cursor: pointer; transition: all 0.15s;
+  &.active { background: var(--pixel-accent); color: white; }
+  &:hover { border-color: var(--pixel-accent); }
+}
+
+.message-list { display: flex; flex-direction: column; gap: 1rem; }
+.empty-state { text-align: center; padding: 3rem 1.5rem; }
+.empty-pixel { font-size: 32px; color: var(--pixel-accent); letter-spacing: 8px; margin-bottom: 1rem; }
+.empty-title { font-size: 12px; color: var(--pixel-accent); margin-bottom: 8px; }
+.empty-desc { font-size: 15px; color: var(--pixel-text-dim); }
+
+.message-item { padding: 1.25rem; animation: msg-in 0.4s ease-out; position: relative; }
+@keyframes msg-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.msg-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.msg-avatar {
+  width: 40px; height: 40px; border: 3px solid var(--pixel-dark); box-shadow: 2px 2px 0 0 var(--pixel-dark);
+  display: flex; align-items: center; justify-content: center; color: white; font-family: var(--pixel-font-title);
+  font-size: 14px; font-weight: bold; flex-shrink: 0;
+}
+.msg-user-info { flex: 1; min-width: 0; }
+.msg-name { font-weight: bold; font-size: 16px; color: var(--pixel-dark); }
+.msg-time { font-family: var(--pixel-font-title); font-size: 8px; color: var(--pixel-text-dim); display: block; margin-top: 2px; }
+.msg-mood { font-size: 24px; flex-shrink: 0; }
+.msg-tag { font-size: 7px; color: var(--pixel-accent); border: 2px solid var(--pixel-accent); padding: 2px 6px; flex-shrink: 0; }
+
+.msg-body { font-size: 16px; line-height: 1.8; color: var(--pixel-dark); padding: 10px 0; word-break: break-word; white-space: pre-wrap; }
+.msg-footer { display: flex; gap: 6px; flex-wrap: wrap; }
+.msg-action {
+  padding: 4px 10px; font-size: 13px; background: var(--pixel-bg); color: var(--pixel-dark);
+  border: 2px solid var(--pixel-dark); box-shadow: 2px 2px 0 0 rgba(26,26,46,0.15); cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: center; gap: 4px;
+  &:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 0 rgba(26,26,46,0.2); }
+}
+.like-btn.liked { background: var(--pixel-accent); color: white; border-color: var(--pixel-accent); }
+.delete-btn { margin-left: auto; color: var(--pixel-text-dim); &:hover { color: var(--pixel-accent); border-color: var(--pixel-accent); } }
+
+.reply-area { margin-top: 10px; border-top: 2px dashed rgba(26,26,46,0.15); padding-top: 10px; }
+.reply-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+.reply-item { display: flex; gap: 8px; align-items: flex-start; padding: 8px; background: var(--pixel-bg); border: 2px solid rgba(26,26,46,0.1); }
+.reply-avatar { width: 24px; height: 24px; border: 2px solid var(--pixel-dark); display: flex; align-items: center; justify-content: center; color: white; font-family: var(--pixel-font-title); font-size: 8px; flex-shrink: 0; }
+.reply-content { flex: 1; }
+.reply-name { font-weight: bold; font-size: 13px; color: var(--pixel-dark); }
+.reply-text { font-size: 14px; color: var(--pixel-dark); line-height: 1.5; white-space: pre-wrap; }
+.reply-time { font-family: var(--pixel-font-title); font-size: 7px; color: var(--pixel-text-dim); }
+.reply-input-wrap { display: flex; gap: 6px; }
+.reply-input { flex: 1; font-size: 14px; padding: 6px 10px; }
+.reply-submit-btn { padding: 6px 12px; font-size: 13px; background: var(--pixel-secondary); color: white; }
+</style>
+
+<script define:vars={{ STORAGE_KEY: 'pixel-blog-messages' }}>
+  const avatarColors = ['#e74c3c','#27ae60','#3498db','#9b59b6','#f39c12','#1abc9c','#e67e22','#2ecc71','#e74c3c','#1a1a2e'];
+  const nameInput = document.getElementById('msg-name');
+  const emailInput = document.getElementById('msg-email');
+  const contentInput = document.getElementById('msg-content');
+  const charNum = document.getElementById('char-num');
+  const submitBtn = document.getElementById('msg-submit');
+  const clearBtn = document.getElementById('msg-clear');
+  const messageList = document.getElementById('message-list');
+  const emptyState = document.getElementById('empty-state');
+  const moodBtns = document.querySelectorAll('.mood-btn');
+  const colorBtns = document.querySelectorAll('.color-btn');
+  const sortBtns = document.querySelectorAll('.sort-btn');
+  let selectedMood = '😊';
+  let selectedColor = '#e74c3c';
+  let currentSort = 'newest';
+
+  function loadMessages() { try { return JSON.parse(localStorage.getItem('pixel-blog-messages') || '[]'); } catch { return []; } }
+  function saveMessages(msgs) { localStorage.setItem('pixel-blog-messages', JSON.stringify(msgs)); }
+
+  contentInput.addEventListener('input', () => { charNum.textContent = contentInput.value.length; });
+
+  moodBtns.forEach(btn => btn.addEventListener('click', () => {
+    moodBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active'); selectedMood = btn.dataset.mood;
+  }));
+
+  colorBtns.forEach(btn => btn.addEventListener('click', () => {
+    colorBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active'); selectedColor = btn.dataset.color;
+  }));
+
+  sortBtns.forEach(btn => btn.addEventListener('click', () => {
+    sortBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active'); currentSort = btn.dataset.sort; renderMessages();
+  }));
+
+  clearBtn.addEventListener('click', () => {
+    nameInput.value = ''; emailInput.value = ''; contentInput.value = '';
+    charNum.textContent = '0';
+    moodBtns.forEach(b => b.classList.remove('active')); moodBtns[0].classList.add('active'); selectedMood = '😊';
+    colorBtns.forEach(b => b.classList.remove('active')); colorBtns[0].classList.add('active'); selectedColor = '#e74c3c';
+  });
+
+  function formatTime(ts) {
+    const d = new Date(ts), now = new Date(), diff = now - d;
+    if (diff < 60000) return '刚刚';
+    if (diff < 3600000) return Math.floor(diff / 60000) + '分钟前';
+    if (diff < 86400000) return Math.floor(diff / 3600000) + '小时前';
+    if (diff < 172800000) return '昨天';
+    return d.toLocaleDateString('zh-CN') + ' ' + d.toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit'});
+  }
+
+  function renderMessages() {
+    let msgs = loadMessages();
+    document.getElementById('total-msg').textContent = msgs.length;
+    const today = new Date().toDateString();
+    document.getElementById('today-msg').textContent = msgs.filter(m => new Date(m.time).toDateString() === today).length;
+    document.getElementById('total-users').textContent = new Set(msgs.map(m => m.name)).size;
+
+    if (msgs.length === 0) { emptyState.style.display = ''; messageList.querySelectorAll('.message-item').forEach(el => el.remove()); return; }
+    emptyState.style.display = 'none';
+
+    let sorted = msgs.map((m, i) => ({ ...m, _idx: i }));
+    if (currentSort === 'newest') sorted.sort((a, b) => b.time - a.time);
+    else sorted.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+
+    messageList.querySelectorAll('.message-item').forEach(el => el.remove());
+    const tpl = document.getElementById('msg-template');
+
+    sorted.forEach(msg => {
+      const el = tpl.content.cloneNode(true);
+      const item = el.querySelector('.message-item');
+      item.querySelector('.msg-avatar').style.background = msg.color || avatarColors[msg.name.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % avatarColors.length];
+      item.querySelector('.msg-avatar').textContent = msg.name.charAt(0).toUpperCase();
+      item.querySelector('.msg-name').textContent = msg.name;
+      item.querySelector('.msg-time').textContent = formatTime(msg.time);
+      item.querySelector('.msg-mood').textContent = msg.mood;
+      item.querySelector('.msg-tag').textContent = msg.isOwner ? '楼主' : '#' + (msg._idx + 1);
+      item.querySelector('.msg-body').textContent = msg.content;
+      const likeBtn = item.querySelector('.like-btn');
+      likeBtn.querySelector('.like-count').textContent = msg.likes || 0;
+      if (msg.liked) likeBtn.classList.add('liked');
+
+      // 点赞
+      likeBtn.addEventListener('click', () => {
+        const allMsgs = loadMessages();
+        if (!allMsgs[msg._idx].liked) { allMsgs[msg._idx].likes = (allMsgs[msg._idx].likes || 0) + 1; allMsgs[msg._idx].liked = true; }
+        else { allMsgs[msg._idx].likes = Math.max(0, (allMsgs[msg._idx].likes || 0) - 1); allMsgs[msg._idx].liked = false; }
+        saveMessages(allMsgs); renderMessages();
+      });
+
+      // 删除
+      item.querySelector('.delete-btn').addEventListener('click', () => {
+        if (confirm('确定删除这条留言吗？')) {
+          const allMsgs = loadMessages(); allMsgs.splice(msg._idx, 1); saveMessages(allMsgs); renderMessages();
+        }
+      });
+
+      // 回复
+      const replyBtn = item.querySelector('.reply-btn');
+      const replyArea = item.querySelector('.reply-area');
+      replyBtn.addEventListener('click', () => {
+        const visible = replyArea.style.display !== 'none';
+        replyArea.style.display = visible ? 'none' : 'block';
+        if (!visible) replyArea.querySelector('.reply-input')?.focus();
+      });
+
+      // 渲染已有回复
+      const replyList = item.querySelector('.reply-list');
+      if (msg.replies && msg.replies.length > 0) {
+        replyArea.style.display = 'block';
+        msg.replies.forEach(r => {
+          const div = document.createElement('div'); div.className = 'reply-item';
+          const color = avatarColors[r.name.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % avatarColors.length];
+          div.innerHTML = `
+            <div class="reply-avatar" style="background:${color}">${r.name.charAt(0).toUpperCase()}</div>
+            <div class="reply-content">
+              <span class="reply-name">${r.name}</span>
+              <div class="reply-text">${r.content}</div>
+              <span class="reply-time">${formatTime(r.time)}</span>
+            </div>`;
+          replyList.appendChild(div);
+        });
+      }
+
+      // 提交回复
+      const replyInput = item.querySelector('.reply-input');
+      const replySubmit = item.querySelector('.reply-submit-btn');
+      replySubmit.addEventListener('click', () => {
+        const content = replyInput.value.trim(); if (!content) return;
+        const allMsgs = loadMessages();
+        if (!allMsgs[msg._idx].replies) allMsgs[msg._idx].replies = [];
+        allMsgs[msg._idx].replies.push({ name: nameInput.value.trim() || '匿名冒险者', content, time: Date.now() });
+        saveMessages(allMsgs); replyInput.value = ''; renderMessages();
+      });
+      replyInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); replySubmit.click(); }});
+
+      messageList.appendChild(el);
+    });
+  }
+
+  submitBtn.addEventListener('click', () => {
+    const name = nameInput.value.trim() || '匿名冒险者';
+    const email = emailInput.value.trim();
+    const content = contentInput.value.trim();
+    if (!content) { contentInput.style.borderColor = 'var(--pixel-accent)'; contentInput.focus(); return; }
+    contentInput.style.borderColor = '';
+    const msgs = loadMessages();
+    msgs.push({ name, email, content, mood: selectedMood, color: selectedColor, time: Date.now(), likes: 0, liked: false, isOwner: true, replies: [] });
+    saveMessages(msgs);
+    contentInput.value = ''; charNum.textContent = '0';
+    renderMessages();
+    messageList.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  });
+
+  contentInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitBtn.click(); }});
+
+  // 恢复用户名
+  const savedName = localStorage.getItem('pixel-blog-username');
+  if (savedName) nameInput.value = savedName;
+  nameInput.addEventListener('blur', () => { if (nameInput.value.trim()) localStorage.setItem('pixel-blog-username', nameInput.value.trim()); });
+
+  renderMessages();
+
+  // 预置示例留言
+  if (loadMessages().length === 0) {
+    const demoMsgs = [
+      { name: '像素骑士', email: '', content: '这个像素风博客太酷了！🎮\n感觉回到了小时候坐在电视机前打红白机的日子！', mood: '🎮', color: '#e74c3c', time: Date.now() - 3600000, likes: 8, liked: false, isOwner: false, replies: [
+        { name: '代码法师', content: '同感！特别是音乐播放器，满满的童年回忆！', time: Date.now() - 1800000 },
+      ]},
+      { name: '代码法师', email: '', content: 'Astro + 像素风 = 完美组合！页面加载速度超快，样式也很有个性。我已经在研究怎么自己也搭一个了 🔥', mood: '🔥', color: '#3498db', time: Date.now() - 86400000, likes: 5, liked: false, isOwner: false, replies: [] },
+      { name: '音乐旅人', email: '', content: '超级玛丽的BGM一响起来，我整个人都回到了1985年！能不能再加个洛克人的音乐？😊', mood: '😊', color: '#9b59b6', time: Date.now() - 86400000 * 2, likes: 3, liked: false, isOwner: false, replies: [
+        { name: '像素骑士', content: '洛克人也可以！期待更新~', time: Date.now() - 86400000 },
+      ]},
+      { name: '吃豆高手', email: '', content: '吃豆人经典！Waka Waka Waka 🟡\n街机厅里投了无数个币...', mood: '🎉', color: '#f39c12', time: Date.now() - 86400000 * 5, likes: 6, liked: false, isOwner: false, replies: [] },
+      { name: '魂斗罗老兵', email: '', content: '↑↑↓↓←→←→BA\n这是刻在DNA里的密码！', mood: '🚀', color: '#27ae60', time: Date.now() - 86400000 * 7, likes: 12, liked: false, isOwner: false, replies: [] },
+    ];
+    saveMessages(demoMsgs);
+    renderMessages();
+  }
+</script>

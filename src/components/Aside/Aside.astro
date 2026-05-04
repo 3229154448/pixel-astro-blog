@@ -2,6 +2,8 @@
 import { siteConfig } from '@/config';
 import { withBase } from '@/utils/path';
 import { getCollection } from 'astro:content';
+import MusicPlayer from '@/components/MusicPlayer/MusicPlayer.astro';
+
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 const categories = [...new Set(allPosts.flatMap(p => p.data.categories))];
@@ -11,6 +13,7 @@ const catColors = ['var(--pixel-accent)', 'var(--pixel-secondary)', 'var(--pixel
 const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel-purple)', 'var(--pixel-accent)', 'var(--pixel-green)', 'var(--pixel-blue)', 'var(--pixel-pink)', 'var(--pixel-cyan)', 'var(--pixel-orange)'];
 ---
 <aside class="aside">
+  <!-- 个人信息卡 -->
   <div class="aside-card profile-card">
     <div class="profile-avatar-wrap">
       <img src={withBase('/assets/images/avatar-default.webp')} alt={siteConfig.author} class="profile-avatar" width="96" height="96" />
@@ -33,6 +36,7 @@ const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel
     </div>
   </div>
 
+  <!-- 分类 -->
   {siteConfig.sidebar.showCategories && categories.length > 0 && (
   <div class="aside-card">
     <h3 class="aside-title">📁 文章分类</h3>
@@ -48,6 +52,7 @@ const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel
   </div>
   )}
 
+  <!-- 标签云 -->
   {siteConfig.sidebar.showTags && tags.length > 0 && (
   <div class="aside-card">
     <h3 class="aside-title">🏷️ 标签云</h3>
@@ -59,6 +64,7 @@ const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel
   </div>
   )}
 
+  <!-- 推荐文章 -->
   {siteConfig.sidebar.showRecentPosts && recentPosts.length > 0 && (
   <div class="aside-card">
     <h3 class="aside-title">⭐ 推荐文章</h3>
@@ -78,24 +84,10 @@ const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel
   </div>
   )}
 
-  <div class="aside-card">
-    <h3 class="aside-title">🎵 音乐</h3>
-    <div class="music-player">
-      <div class="music-disc">♫</div>
-      <div class="music-info">
-        <div class="music-title">8-Bit Adventure</div>
-        <div class="music-artist">Pixel Artist</div>
-      </div>
-    </div>
-    <div class="music-controls">
-      <button class="pixel-btn music-btn">◁</button>
-      <button class="pixel-btn music-btn play">▶</button>
-      <button class="pixel-btn music-btn">▷</button>
-      <div class="music-bars">
-        <span></span><span></span><span></span><span></span><span></span>
-      </div>
-    </div>
-    <div class="pixel-progress"><div class="pixel-progress-bar" style="width: 45%"></div></div>
+  <!-- 🎵 红白机音乐播放器 -->
+  <div class="aside-card music-card">
+    <h3 class="aside-title">🎵 红白机音乐</h3>
+    <MusicPlayer />
   </div>
 </aside>
 
@@ -111,6 +103,9 @@ const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel
   font-family: var(--pixel-font-title); font-size: 10px; color: var(--pixel-dark);
   margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;
 }
+.music-card { padding: 1rem; }
+
+/* 个人信息 */
 .profile-card { text-align: center; }
 .profile-avatar-wrap { position: relative; display: inline-block; margin-bottom: 1rem; }
 .profile-avatar {
@@ -143,6 +138,8 @@ const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel
   &.rss { background: var(--pixel-orange); }
   &:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--pixel-dark); }
 }
+
+/* 分类 */
 .category-list { display: flex; flex-direction: column; gap: 4px; }
 .category-item {
   display: flex; align-items: center; justify-content: space-between;
@@ -156,6 +153,8 @@ const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel
   font-family: var(--pixel-font-title); font-size: 9px;
   background: var(--pixel-bg); border: 2px solid var(--pixel-dark); padding: 2px 6px;
 }
+
+/* 标签云 */
 .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
 .tag-pixel {
   display: inline-block; padding: 4px 10px; font-size: 13px; font-weight: bold;
@@ -164,6 +163,8 @@ const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel
   transition: all 0.2s;
   &:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--pixel-dark); background: var(--pixel-accent) !important; color: white !important; }
 }
+
+/* 推荐文章 */
 .rec-list { display: flex; flex-direction: column; gap: 1rem; }
 .rec-item { display: flex; gap: 12px; text-decoration: none; color: var(--pixel-dark); &:hover .rec-title { color: var(--pixel-accent); } }
 .rec-thumb {
@@ -174,32 +175,6 @@ const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel
 .rec-info { min-width: 0; }
 .rec-title { font-size: 14px; font-weight: bold; transition: color 0.2s; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .rec-date { font-size: 12px; color: var(--pixel-text-dim); }
-.music-player { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-.music-disc {
-  width: 48px; height: 48px; background: var(--pixel-purple);
-  border: 3px solid var(--pixel-dark); display: flex; align-items: center; justify-content: center;
-  color: white; font-size: 20px; animation: spin 3s linear infinite;
-}
-@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-.music-info { min-width: 0; }
-.music-title { font-size: 15px; font-weight: bold; color: var(--pixel-dark); }
-.music-artist { font-size: 13px; color: var(--pixel-text-dim); }
-.music-controls { display: flex; align-items: center; gap: 4px; margin-bottom: 8px; }
-.music-btn { padding: 4px 8px; background: var(--pixel-dark); color: white; font-size: 12px; &.play { background: var(--pixel-accent); } }
-.music-bars { display: flex; align-items: flex-end; gap: 2px; height: 24px; margin-left: 8px; flex: 1;
-  span { width: 4px; background: var(--pixel-accent); animation: music-wave 0.5s ease-in-out infinite alternate;
-    &:nth-child(1) { height: 8px; animation-delay: 0s; }
-    &:nth-child(2) { height: 16px; animation-delay: 0.1s; }
-    &:nth-child(3) { height: 12px; animation-delay: 0.2s; }
-    &:nth-child(4) { height: 20px; animation-delay: 0.3s; }
-    &:nth-child(5) { height: 10px; animation-delay: 0.15s; }
-  }
-}
-@keyframes music-wave { from { height: 8px; } to { height: 24px; } }
-.pixel-progress { background: var(--pixel-bg); border: 3px solid var(--pixel-dark); height: 12px; overflow: hidden; }
-.pixel-progress-bar {
-  background: repeating-linear-gradient(45deg, var(--pixel-accent), var(--pixel-accent) 10px, #c0392b 10px, #c0392b 20px);
-  height: 100%; border-right: 3px solid var(--pixel-dark);
-}
+
 @media screen and (max-width: 768px) { .aside { display: none; } }
 </style>
