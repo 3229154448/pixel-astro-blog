@@ -33,6 +33,7 @@ export default defineConfig({
       },
     },
   },
+  base: '/pixel-astro-blog',
   build: {
     assets: 'vh_static',
   },

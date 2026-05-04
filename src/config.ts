@@ -1,6 +1,6 @@
 export const siteConfig = {
   title: '像素小站',
-  site: 'https://pixel-astro-blog.github.io',
+  site: 'https://3229154448.github.io/pixel-astro-blog',
   author: 'Pixel',
   motto: '8-Bit Life, Infinite Possibilities.',
   description: '一个像素风格的Astro博客主题',
