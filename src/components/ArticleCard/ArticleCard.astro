@@ -1,13 +1,15 @@
 ---
 import { formatDate } from '@/utils';
+import { withBase } from '@/utils/path';
 interface Props { title: string; description: string; cover?: string; date: Date; tags: string[]; categories: string[]; readingTime?: number; wordCount?: number; link: string; pin?: boolean; }
 const { title, description, cover, date, tags, categories, readingTime, wordCount, link, pin } = Astro.props;
 const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel-purple)', 'var(--pixel-accent)', 'var(--pixel-green)', 'var(--pixel-blue)', 'var(--pixel-pink)', 'var(--pixel-cyan)'];
+const coverUrl = cover ? withBase(cover) : withBase('/assets/images/avatar-default.webp');
 ---
 <a href={link} class="article-card pixel-card">
   <div class="card-cover">
     <div class="cover-wrap">
-      <img src={cover || '/assets/images/avatar-default.webp'} alt={title} loading="lazy" />
+      <img src={coverUrl} alt={title} loading="lazy" />
       {pin && <span class="top-badge">置顶</span>}
       <div class="cover-bottom">
         {readingTime && <span class="read-badge">⏱ {readingTime}分钟</span>}

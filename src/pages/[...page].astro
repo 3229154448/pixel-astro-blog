@@ -4,6 +4,7 @@ import ArticleCard from '@/components/ArticleCard/ArticleCard.astro';
 import Pagination from '@/components/Pagination/Pagination.astro';
 import MainHeader from '@/components/MainHeader/MainHeader.astro';
 import { getCollection } from 'astro:content';
+import { withBase } from '@/utils/path';
 import { getReadingTime, getWordCount } from '@/utils';
 
 export async function getStaticPaths({ paginate }: any) {
@@ -20,7 +21,7 @@ const { page } = Astro.props;
       <ArticleCard title={post.data.title} description={post.data.description} cover={post.data.cover}
         date={post.data.date} tags={post.data.tags} categories={post.data.categories}
         readingTime={getReadingTime(post.body || '')} wordCount={getWordCount(post.body || '')}
-        link={`/article/${post.id}`} pin={post.data.pin} />
+        link={withBase(`/article/${post.id}`)} pin={post.data.pin} />
     ))}
   </div>
   <Pagination currentPage={page.currentPage} totalPages={page.lastPage} />

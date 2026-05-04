@@ -4,6 +4,7 @@ description: '从像素艺术到游戏设计，探讨复古游戏中那些经久
 date: 2026-05-03
 tags: ['游戏设计', '像素艺术', 'UI设计']
 categories: ['思考']
+cover: '/assets/images/banner/retro-game.webp'
 toc: true
 comment: true
 reward: false

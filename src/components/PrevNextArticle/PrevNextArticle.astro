@@ -1,17 +1,21 @@
 ---
+import { withBase } from '@/utils/path';
 interface Props { prev?: { title: string; slug: string } | null; next?: { title: string; slug: string } | null; }
 const { prev, next } = Astro.props;
 ---
-{(prev || next) && (
-  <nav class="prev-next">
-    {prev && <a href={`/article/${prev.slug}`} class="prev-next-item pixel-card"><span class="pn-label">◄ 上一篇</span><span class="pn-title">{prev.title}</span></a>}
-    {next && <a href={`/article/${next.slug}`} class="prev-next-item pixel-card"><span class="pn-label">下一篇 ►</span><span class="pn-title">{next.title}</span></a>}
-  </nav>
-)}
+<div class="prev-next">
+  {prev && <a href={withBase(`/article/${prev.slug}`)} class="prev-next-item pixel-card"><span class="pn-label">◄ 上一篇</span><span class="pn-title">{prev.title}</span></a>}
+  {next && <a href={withBase(`/article/${next.slug}`)} class="prev-next-item pixel-card"><span class="pn-label">下一篇 ►</span><span class="pn-title">{next.title}</span></a>}
+</div>
+
 <style lang="less">
-.prev-next { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; }
-.prev-next-item { display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem; text-decoration: none; border-bottom: none; }
-.pn-label { font-family: var(--pixel-font-title); font-size: 8px; color: var(--pixel-text-dim); }
-.pn-title { font-family: var(--pixel-font-title); font-size: 9px; color: var(--pixel-primary); }
-@media screen and (max-width: 768px) { .prev-next { grid-template-columns: 1fr; } }
+.prev-next { display: flex; gap: 1rem; margin-top: 2rem; @media (max-width: 768px) { flex-direction: column; } }
+.prev-next-item {
+  flex: 1; padding: 1.25rem; text-decoration: none; color: var(--pixel-dark);
+  display: flex; flex-direction: column; gap: 8px;
+  &:hover { transform: translate(-2px, -2px); }
+  &:hover .pn-title { color: var(--pixel-accent); }
+}
+.pn-label { font-family: var(--pixel-font-title); font-size: 9px; color: var(--pixel-text-dim); }
+.pn-title { font-size: 16px; font-weight: bold; transition: color 0.2s; }
 </style>

@@ -7,6 +7,7 @@ import PrevNextArticle from '@/components/PrevNextArticle/PrevNextArticle.astro'
 import Comment from '@/components/Comment/Comment.astro';
 import Reward from '@/components/Reward/Reward.astro';
 import Aside from '@/components/Aside/Aside.astro';
+import { withBase } from '@/utils/path';
 import '@/styles/Article.less';
 
 export async function getStaticPaths() {
@@ -21,7 +22,7 @@ allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 const ci = allPosts.findIndex(p => p.id === post.id);
 const prevPost = ci > 0 ? allPosts[ci - 1] : null;
 const nextPost = ci < allPosts.length - 1 ? allPosts[ci + 1] : null;
-const articleUrl = `${Astro.site}article/${post.id}`;
+const articleUrl = `${Astro.site}${Astro.base?.replace(/\//g, '') || ''}/article/${post.id}`;
 ---
 <Layout title={post.data.title} description={post.data.description} cover={post.data.cover}>
   <div class="page-layout">
@@ -34,7 +35,7 @@ const articleUrl = `${Astro.site}article/${post.id}`;
           <span>⏱️ {getReadingTime(post.body || '')} 分钟</span>
           <span>📝 {getWordCount(post.body || '')} 字</span>
         </div>
-        <div class="article-tags">{post.data.tags.map((tag: string) => (<a href={`/tag/${tag}`} class="pixel-tag">{tag}</a>))}</div>
+        <div class="article-tags">{post.data.tags.map((tag: string) => (<a href={withBase(`/tag/${tag}`)} class="pixel-tag">{tag}</a>))}</div>
       </div>
       <div class="article-content"><Content /></div>
       <Copyright title={post.data.title} url={articleUrl} />

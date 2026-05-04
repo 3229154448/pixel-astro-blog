@@ -1,5 +1,6 @@
 ---
 import { siteConfig } from '@/config';
+import { withBase } from '@/utils/path';
 import { getCollection } from 'astro:content';
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
@@ -10,10 +11,9 @@ const catColors = ['var(--pixel-accent)', 'var(--pixel-secondary)', 'var(--pixel
 const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel-purple)', 'var(--pixel-accent)', 'var(--pixel-green)', 'var(--pixel-blue)', 'var(--pixel-pink)', 'var(--pixel-cyan)', 'var(--pixel-orange)'];
 ---
 <aside class="aside">
-  <!-- 个人信息卡 -->
   <div class="aside-card profile-card">
     <div class="profile-avatar-wrap">
-      <img src="/assets/images/avatar-default.webp" alt={siteConfig.author} class="profile-avatar" width="96" height="96" />
+      <img src={withBase('/assets/images/avatar-default.webp')} alt={siteConfig.author} class="profile-avatar" width="96" height="96" />
       <div class="profile-badge">✓</div>
     </div>
     <h3 class="pixel-font profile-name">{siteConfig.author}</h3>
@@ -29,17 +29,16 @@ const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel
       <a href="https://github.com" target="_blank" class="social-btn github" title="GitHub">GH</a>
       <a href="#" class="social-btn twitter" title="Twitter">TW</a>
       <a href="#" class="social-btn email" title="Email">✉</a>
-      <a href="/rss.xml" class="social-btn rss" title="RSS">RSS</a>
+      <a href={withBase('/rss.xml')} class="social-btn rss" title="RSS">RSS</a>
     </div>
   </div>
 
-  <!-- 分类 -->
   {siteConfig.sidebar.showCategories && categories.length > 0 && (
   <div class="aside-card">
     <h3 class="aside-title">📁 文章分类</h3>
     <div class="category-list">
       {categories.map((cat, i) => (
-        <a href={`/categories/${cat}`} class="category-item">
+        <a href={withBase(`/categories/${cat}`)} class="category-item">
           <span class="cat-color" style={`background: ${catColors[i % catColors.length]}`}></span>
           <span class="cat-name">{cat}</span>
           <span class="cat-count">{allPosts.filter(p => p.data.categories.includes(cat)).length}</span>
@@ -49,27 +48,25 @@ const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel
   </div>
   )}
 
-  <!-- 标签云 -->
   {siteConfig.sidebar.showTags && tags.length > 0 && (
   <div class="aside-card">
     <h3 class="aside-title">🏷️ 标签云</h3>
     <div class="tag-cloud">
       {tags.map((tag, i) => (
-        <a href={`/tag/${tag}`} class="tag-pixel" style={`background: ${tagColors[i % tagColors.length]}`}>{tag}</a>
+        <a href={withBase(`/tag/${tag}`)} class="tag-pixel" style={`background: ${tagColors[i % tagColors.length]}`}>{tag}</a>
       ))}
     </div>
   </div>
   )}
 
-  <!-- 推荐文章 -->
   {siteConfig.sidebar.showRecentPosts && recentPosts.length > 0 && (
   <div class="aside-card">
     <h3 class="aside-title">⭐ 推荐文章</h3>
     <div class="rec-list">
       {recentPosts.map(post => (
-        <a href={`/article/${post.id}`} class="rec-item">
+        <a href={withBase(`/article/${post.id}`)} class="rec-item">
           <div class="rec-thumb">
-            <img src={post.data.cover || '/assets/images/avatar-default.webp'} alt={post.data.title} width="64" height="64" />
+            <img src={withBase(post.data.cover || '/assets/images/avatar-default.webp')} alt={post.data.title} width="64" height="64" />
           </div>
           <div class="rec-info">
             <h4 class="rec-title">{post.data.title}</h4>
@@ -81,7 +78,6 @@ const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel
   </div>
   )}
 
-  <!-- 音乐 -->
   <div class="aside-card">
     <h3 class="aside-title">🎵 音乐</h3>
     <div class="music-player">
@@ -115,13 +111,11 @@ const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel
   font-family: var(--pixel-font-title); font-size: 10px; color: var(--pixel-dark);
   margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;
 }
-
-/* 个人信息 */
 .profile-card { text-align: center; }
 .profile-avatar-wrap { position: relative; display: inline-block; margin-bottom: 1rem; }
 .profile-avatar {
   width: 96px; height: 96px; border: 4px solid var(--pixel-dark);
-  box-shadow: 4px 4px 0 0 var(--pixel-dark); image-rendering: pixelated;
+  box-shadow: 4px 4px 0 0 var(--pixel-dark); image-rendering: pixelated; background: white;
 }
 .profile-badge {
   position: absolute; bottom: -2px; right: -2px;
@@ -149,8 +143,6 @@ const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel
   &.rss { background: var(--pixel-orange); }
   &:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--pixel-dark); }
 }
-
-/* 分类 */
 .category-list { display: flex; flex-direction: column; gap: 4px; }
 .category-item {
   display: flex; align-items: center; justify-content: space-between;
@@ -164,8 +156,6 @@ const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel
   font-family: var(--pixel-font-title); font-size: 9px;
   background: var(--pixel-bg); border: 2px solid var(--pixel-dark); padding: 2px 6px;
 }
-
-/* 标签云 */
 .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
 .tag-pixel {
   display: inline-block; padding: 4px 10px; font-size: 13px; font-weight: bold;
@@ -174,8 +164,6 @@ const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel
   transition: all 0.2s;
   &:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--pixel-dark); background: var(--pixel-accent) !important; color: white !important; }
 }
-
-/* 推荐文章 */
 .rec-list { display: flex; flex-direction: column; gap: 1rem; }
 .rec-item { display: flex; gap: 12px; text-decoration: none; color: var(--pixel-dark); &:hover .rec-title { color: var(--pixel-accent); } }
 .rec-thumb {
@@ -186,8 +174,6 @@ const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel
 .rec-info { min-width: 0; }
 .rec-title { font-size: 14px; font-weight: bold; transition: color 0.2s; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .rec-date { font-size: 12px; color: var(--pixel-text-dim); }
-
-/* 音乐 */
 .music-player { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
 .music-disc {
   width: 48px; height: 48px; background: var(--pixel-purple);
@@ -215,6 +201,5 @@ const tagColors = ['var(--pixel-yellow)', 'var(--pixel-secondary)', 'var(--pixel
   background: repeating-linear-gradient(45deg, var(--pixel-accent), var(--pixel-accent) 10px, #c0392b 10px, #c0392b 20px);
   height: 100%; border-right: 3px solid var(--pixel-dark);
 }
-
 @media screen and (max-width: 768px) { .aside { display: none; } }
 </style>

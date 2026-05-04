@@ -1,5 +1,6 @@
 ---
 import { siteConfig } from '@/config';
+import { withBase } from '@/utils/path';
 const typewriterTexts = JSON.stringify(siteConfig.typewriter);
 ---
 <div class="home-banner">
@@ -10,13 +11,13 @@ const typewriterTexts = JSON.stringify(siteConfig.typewriter);
   </div>
   <div class="banner-inner">
     <div class="avatar-wrap">
-      <img src="/assets/images/avatar-default.webp" alt={siteConfig.author} class="banner-avatar" width="128" height="128" />
+      <img src={withBase('/assets/images/avatar-default.webp')} alt={siteConfig.author} class="banner-avatar" width="128" height="128" />
       <div class="avatar-badge">🎮</div>
     </div>
     <h1 class="banner-title pixel-font">PIXEL DEVELOPER</h1>
     <p class="banner-subtitle" id="main-typewriter"></p>
     <div class="banner-actions">
-      <a href="/archives" class="pixel-btn accent">🚀 开始探索</a>
+      <a href={withBase('/archives')} class="pixel-btn accent">🚀 开始探索</a>
       <a href="https://github.com" target="_blank" class="pixel-btn yellow">🐱 GitHub</a>
     </div>
   </div>

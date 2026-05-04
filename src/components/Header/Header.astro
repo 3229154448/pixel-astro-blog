@@ -1,18 +1,19 @@
 ---
 import { siteConfig } from '@/config';
+import { withBase } from '@/utils/path';
 import Search from '@/components/Search/Search.astro';
 import MobileSidebar from '@/components/MobileSidebar/MobileSidebar.astro';
 const currentPath = Astro.url.pathname;
 ---
 <header class="vh-header">
   <div class="header-inner">
-    <a href="/" class="logo">
+    <a href={withBase('/')} class="logo">
       <div class="logo-icon">P</div>
       <span class="logo-text">PIXEL.BLOG</span>
     </a>
     <nav class="nav-desktop">
       {siteConfig.navbar.map(item => (
-        <a href={item.link} class:list={['nav-link', { active: currentPath === item.link || (item.link !== '/' && currentPath.startsWith(item.link)) }]}>
+        <a href={withBase(item.link)} class:list={['nav-link', { active: currentPath === withBase(item.link) || (item.link !== '/' && currentPath.startsWith(withBase(item.link))) }]}>
           {item.name}
         </a>
       ))}
@@ -69,15 +70,25 @@ const currentPath = Astro.url.pathname;
   span { display: block; width: 20px; height: 3px; background: white; }
 }
 @keyframes glitch {
-  0% { transform: translate(0); } 20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); } 60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); } 100% { transform: translate(0); }
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
 }
-@media screen and (max-width: 768px) { .nav-desktop { display: none; } .mobile-menu-btn { display: flex; } }
+@media screen and (max-width: 768px) {
+  .nav-desktop { display: none; }
+  .mobile-menu-btn { display: flex; }
+}
 </style>
 
 <script>
   const btn = document.getElementById('mobile-menu-btn');
   const sidebar = document.getElementById('mobile-sidebar');
-  if (btn && sidebar) { btn.addEventListener('click', () => { sidebar.classList.toggle('open'); }); }
+  if (btn && sidebar) {
+    btn.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+    });
+  }
 </script>
