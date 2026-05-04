@@ -1,0 +1,183 @@
+---
+---
+<div class="loading-screen" id="loading-screen">
+  <div class="loading-scene">
+    <!-- 像素风吃豆人场景 -->
+    <div class="pac-container">
+      <div class="pac-man">
+        <div class="pac-mouth"></div>
+      </div>
+      <div class="dot d1"></div>
+      <div class="dot d2"></div>
+      <div class="dot d3"></div>
+      <div class="dot d4"></div>
+      <div class="dot d5"></div>
+    </div>
+    <div class="loading-text pixel-font">LOADING...</div>
+    <div class="loading-bar">
+      <div class="loading-bar-fill" id="loading-bar-fill"></div>
+    </div>
+    <div class="loading-hint pixel-font" id="loading-hint">🟡 WAKA WAKA</div>
+  </div>
+</div>
+
+<style lang="less">
+.loading-screen {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--pixel-bg, #e8e0d5);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  &.fade-out { opacity: 0; visibility: hidden; }
+  &.hidden { display: none; }
+}
+.loading-scene { text-align: center; }
+.pac-container {
+  width: 240px; height: 40px; position: relative;
+  display: flex; align-items: center;
+  margin: 0 auto 1.5rem;
+}
+.pac-man {
+  width: 36px; height: 36px; position: relative;
+  background: #f39c12; border-radius: 50%;
+  border: 3px solid #1a1a2e;
+  animation: pac-move 2.5s linear infinite;
+  z-index: 2;
+}
+.pac-mouth {
+  position: absolute; top: -2px; right: -2px;
+  width: 0; height: 0;
+  border-top: 20px solid var(--pixel-bg, #e8e0d5);
+  border-bottom: 20px solid var(--pixel-bg, #e8e0d5);
+  border-left: 20px solid transparent;
+  animation: pac-chomp 0.25s ease-in-out infinite alternate;
+  transform-origin: left center;
+}
+@keyframes pac-chomp {
+  0% { border-top-width: 20px; border-bottom-width: 20px; }
+  100% { border-top-width: 4px; border-bottom-width: 4px; }
+}
+@keyframes pac-move {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(200px); }
+}
+.dot {
+  position: absolute; width: 8px; height: 8px;
+  background: #1a1a2e; border: 2px solid #1a1a2e;
+  &.d1 { left: 52px; }
+  &.d2 { left: 80px; }
+  &.d3 { left: 108px; }
+  &.d4 { left: 136px; }
+  &.d5 { left: 164px; }
+  animation: dot-eat 2.5s linear infinite;
+}
+@keyframes dot-eat {
+  0%, 18% { opacity: 1; transform: scale(1); }
+  20% { opacity: 0; transform: scale(0); }
+  100% { opacity: 0; transform: scale(0); }
+}
+.dot.d2 { animation-delay: 0.14s; }
+.dot.d3 { animation-delay: 0.28s; }
+.dot.d4 { animation-delay: 0.42s; }
+.dot.d5 { animation-delay: 0.56s; }
+
+.loading-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px; color: #1a1a2e;
+  margin-bottom: 1rem;
+  animation: text-blink 0.8s step-end infinite;
+}
+@keyframes text-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.loading-bar {
+  width: 220px; height: 14px;
+  background: var(--pixel-bg, #e8e0d5);
+  border: 3px solid #1a1a2e;
+  margin: 0 auto 1rem;
+  position: relative; overflow: hidden;
+}
+.loading-bar-fill {
+  height: 100%; width: 0%;
+  background: repeating-linear-gradient(
+    90deg, #e74c3c 0px, #e74c3c 8px, #c0392b 8px, #c0392b 16px
+  );
+  transition: width 0.3s ease;
+  animation: bar-move 0.5s linear infinite;
+}
+@keyframes bar-move {
+  0% { background-position: 0 0; }
+  100% { background-position: 16px 0; }
+}
+.loading-hint {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px; color: #5a5a6e;
+  animation: hint-cycle 6s step-end infinite;
+}
+
+/* 暗色主题适配 */
+:root[data-theme="dark"] .loading-screen {
+  background: #1a1c2c;
+}
+:root[data-theme="dark"] .pac-mouth {
+  border-top-color: #1a1c2c;
+  border-bottom-color: #1a1c2c;
+}
+:root[data-theme="dark"] .dot {
+  background: #5cdb95; border-color: #5cdb95;
+}
+:root[data-theme="dark"] .loading-text {
+  color: #e8e0d5;
+}
+:root[data-theme="dark"] .loading-bar {
+  background: #1a1c2c; border-color: #e8e0d5;
+}
+:root[data-theme="dark"] .loading-bar-fill {
+  background: repeating-linear-gradient(90deg, #ff6b6b 0px, #ff6b6b 8px, #cc5555 8px, #cc5555 16px);
+}
+:root[data-theme="dark"] .loading-hint {
+  color: #9e9eb8;
+}
+</style>
+
+<script is:inline>
+  (function() {
+    const fill = document.getElementById('loading-bar-fill');
+    const hint = document.getElementById('loading-hint');
+    const hints = ['🟡 WAKA WAKA', '🍄 1-1 WORLD', '🎮 INSERT COIN', '⬆️⬆️⬇️⬇️', '🟦 PRESS START', '🕹️ PLAYER 1 READY'];
+    let hintIdx = 0;
+    const hintTimer = setInterval(() => {
+      hintIdx = (hintIdx + 1) % hints.length;
+      hint.textContent = hints[hintIdx];
+    }, 1500);
+
+    // 进度条动画
+    let progress = 0;
+    const progressTimer = setInterval(() => {
+      progress += Math.random() * 15 + 5;
+      if (progress > 90) progress = 90;
+      fill.style.width = progress + '%';
+    }, 200);
+
+    // 页面加载完成后隐藏
+    function hideLoader() {
+      clearInterval(progressTimer);
+      clearInterval(hintTimer);
+      fill.style.width = '100%';
+      const screen = document.getElementById('loading-screen');
+      setTimeout(() => {
+        screen.classList.add('fade-out');
+        setTimeout(() => { screen.classList.add('hidden'); }, 400);
+      }, 300);
+    }
+
+    // 在所有资源加载完毕后隐藏
+    if (document.readyState === 'complete') {
+      hideLoader();
+    } else {
+      window.addEventListener('load', hideLoader);
+      // 兜底：最多3秒后隐藏
+      setTimeout(hideLoader, 3000);
+    }
+  })();
+</script>

@@ -6,6 +6,7 @@ import Header from '@/components/Header/Header.astro';
 import Footer from '@/components/Footer/Footer.astro';
 import BackTop from '@/components/BackTop/BackTop.astro';
 import Achievement from '@/components/Achievement/Achievement.astro';
+import LoadingScreen from '@/components/LoadingScreen/LoadingScreen.astro';
 import { siteConfig } from '@/config';
 
 interface Props { title?: string; description?: string; cover?: string; }
@@ -15,6 +16,7 @@ const { title = siteConfig.title, description = siteConfig.description, cover } 
 <html lang="zh-CN">
   <Head title={title} description={description} cover={cover} />
   <body class="pixel-grid crt">
+    <LoadingScreen />
     <!-- 阅读进度条 -->
     <div class="reading-progress" id="reading-progress"><div class="reading-progress-bar" id="reading-progress-bar"></div></div>
     <Header />
