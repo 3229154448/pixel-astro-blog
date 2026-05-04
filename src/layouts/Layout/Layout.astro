@@ -17,7 +17,6 @@ const { title = siteConfig.title, description = siteConfig.description, cover } 
     <Header />
     <main class="main-inner">
       <div class="main-inner-content vh-animation vh-animation-init">
-        <!-- 公告栏 -->
         <div class="announcement-bar">
           <div class="ann-icon">📢</div>
           <div class="ann-content">
@@ -30,6 +29,22 @@ const { title = siteConfig.title, description = siteConfig.description, cover } 
     </main>
     <Footer />
     <BackTop />
+
+    <!-- Konami Code 彩蛋 -->
+    <div class="konami-overlay" id="konami-overlay" style="display:none">
+      <div class="konami-content pixel-card">
+        <div class="konami-title pixel-font">🎮 ↑↑↓↓←→←→BA</div>
+        <div class="konami-art">
+          <pre class="pixel-font">
+ ╔══════════╗
+ ║ 30 LIFE  ║
+ ╚══════════╝
+          </pre>
+        </div>
+        <p class="konami-msg">恭喜！你输入了魂斗罗秘籍！<br/>获得 30 条命 🎉</p>
+        <button class="pixel-btn" onclick="document.getElementById('konami-overlay').style.display='none'">✕ 关闭</button>
+      </div>
+    </div>
   </body>
 </html>
 
@@ -41,9 +56,8 @@ const { title = siteConfig.title, description = siteConfig.description, cover } 
 <style lang="less">
 .announcement-bar {
   display: flex; align-items: flex-start; gap: 12px; padding: 1rem 1.25rem;
-  background: rgba(243, 156, 18, 0.2); border-left: 4px solid var(--pixel-yellow);
-  border: 4px solid var(--pixel-dark); border-left: 4px solid var(--pixel-yellow);
-  box-shadow: 4px 4px 0 0 var(--pixel-dark);
+  background: rgba(243, 156, 18, 0.2); border: 4px solid var(--pixel-dark);
+  border-left: 4px solid var(--pixel-yellow); box-shadow: 4px 4px 0 0 var(--pixel-dark);
 }
 .ann-icon {
   width: 40px; height: 40px; background: var(--pixel-yellow);
@@ -53,4 +67,43 @@ const { title = siteConfig.title, description = siteConfig.description, cover } 
 .ann-content { flex: 1; }
 .ann-title { font-family: var(--pixel-font-title); font-size: 10px; color: var(--pixel-dark); margin-bottom: 4px; }
 .ann-text { font-size: 15px; color: var(--pixel-text-dim); line-height: 1.6; }
+
+.konami-overlay {
+  position: fixed; inset: 0; z-index: 999; background: rgba(0,0,0,0.8);
+  display: flex; align-items: center; justify-content: center;
+}
+.konami-content {
+  text-align: center; padding: 3rem; max-width: 400px; background: var(--pixel-bg);
+  border: 4px solid var(--pixel-accent); box-shadow: 8px 8px 0 0 var(--pixel-accent);
+  animation: konami-in 0.5s ease-out;
+}
+@keyframes konami-in { from { transform: scale(0.5) rotate(-10deg); opacity: 0; } to { transform: scale(1) rotate(0); opacity: 1; } }
+.konami-title { font-size: 12px; color: var(--pixel-accent); margin-bottom: 1.5rem; }
+.konami-art {
+  pre {
+    font-size: 10px; color: var(--pixel-secondary); line-height: 1.4;
+    background: var(--pixel-dark); padding: 1rem; border: 3px solid var(--pixel-accent);
+    display: inline-block;
+  }
+}
+.konami-msg { font-family: var(--pixel-font-body); font-size: 18px; color: var(--pixel-dark); margin: 1.5rem 0; line-height: 1.6; }
 </style>
+
+<script is:inline>
+  // Konami Code: ↑↑↓↓←→←→BA
+  const konamiCode = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  let konamiIdx = 0;
+  document.addEventListener('keydown', (e) => {
+    if (e.key === konamiCode[konamiIdx]) {
+      konamiIdx++;
+      if (konamiIdx === konamiCode.length) {
+        konamiIdx = 0;
+        const overlay = document.getElementById('konami-overlay');
+        overlay.style.display = 'flex';
+        // 彩虹闪烁效果
+        document.body.style.animation = 'rainbow 0.5s ease 3';
+        setTimeout(() => { document.body.style.animation = ''; }, 2000);
+      }
+    } else { konamiIdx = 0; }
+  });
+</script>

@@ -5,23 +5,107 @@ import { formatDateTime } from '@/utils';
 ---
 <PageLayout title="动态">
   <h1 class="pixel-page-title">💬 动态</h1>
-  <div class="talking-list">
+
+  <!-- 发布动态 -->
+  <div class="talking-form pixel-card">
+    <h3 class="pixel-font form-title">✏️ 发动态</h3>
+    <textarea class="pixel-input talking-textarea" id="talking-content" placeholder="此刻在想什么..." rows="3" maxlength="280"></textarea>
+    <div class="talking-form-footer">
+      <span class="char-count"><span id="talking-char">0</span>/280</span>
+      <button class="pixel-btn" id="talking-submit">📤 发布</button>
+    </div>
+  </div>
+
+  <div class="talking-list" id="talking-list">
     {talkingData.map(item => (
       <div class="talking-item pixel-card">
         <div class="talking-meta">
+          <span class="talking-avatar">🎮</span>
+          <span class="talking-name">Pixel</span>
           <span class="talking-date">🕐 {formatDateTime(item.date)}</span>
           {item.tags && item.tags.map(tag => (<span class="pixel-tag">{tag}</span>))}
         </div>
         <p class="talking-content">{item.content}</p>
+        <div class="talking-actions">
+          <button class="talking-action like-action">❤️ <span>0</span></button>
+        </div>
       </div>
     ))}
   </div>
 </PageLayout>
+
 <style lang="less">
-.pixel-page-title { font-family: var(--pixel-font-title); font-size: 12px; color: var(--pixel-primary); text-shadow: 3px 3px 0 var(--pixel-shadow-color); margin-bottom: 1.5rem; }
+.pixel-page-title { font-family: var(--pixel-font-title); font-size: 16px; color: var(--pixel-dark); text-shadow: 3px 3px 0 var(--pixel-shadow-color); margin-bottom: 1.5rem; }
+.talking-form { padding: 1.25rem; }
+.form-title { font-size: 10px; color: var(--pixel-dark); margin-bottom: 0.75rem; }
+.talking-textarea { min-height: 80px; resize: vertical; line-height: 1.6; margin-bottom: 0.75rem; }
+.talking-form-footer { display: flex; justify-content: space-between; align-items: center; }
+.char-count { font-family: var(--pixel-font-title); font-size: 9px; color: var(--pixel-text-dim); }
+
 .talking-list { display: flex; flex-direction: column; gap: 1rem; }
-.talking-item { padding: 1.25rem; }
-.talking-meta { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+.talking-item { padding: 1.25rem; &:hover { transform: translate(-2px, -2px); } }
+.talking-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 0.75rem; }
+.talking-avatar { font-size: 20px; }
+.talking-name { font-weight: bold; font-size: 15px; color: var(--pixel-dark); }
 .talking-date { font-family: var(--pixel-font-title); font-size: 8px; color: var(--pixel-text-dim); }
-.talking-content { font-size: 20px; color: var(--pixel-text); line-height: 1.6; }
+.pixel-tag {
+  font-family: var(--pixel-font-title); font-size: 8px; color: var(--pixel-dark);
+  background: var(--pixel-yellow); border: 2px solid var(--pixel-dark); padding: 2px 6px;
+}
+.talking-content { font-size: 16px; color: var(--pixel-dark); line-height: 1.8; white-space: pre-wrap; }
+.talking-actions { margin-top: 8px; }
+.talking-action {
+  padding: 4px 10px; font-size: 13px; background: var(--pixel-bg); color: var(--pixel-dark);
+  border: 2px solid var(--pixel-dark); box-shadow: 2px 2px 0 0 rgba(26,26,46,0.15); cursor: pointer;
+  transition: all 0.15s; &:hover { transform: translate(-1px, -1px); }
+  &.liked { background: var(--pixel-accent); color: white; border-color: var(--pixel-accent); }
+}
 </style>
+
+<script>
+  const contentInput = document.getElementById('talking-content') as HTMLTextAreaElement;
+  const charEl = document.getElementById('talking-char');
+  const submitBtn = document.getElementById('talking-submit');
+
+  contentInput.addEventListener('input', () => { charEl.textContent = String(contentInput.value.length); });
+
+  submitBtn.addEventListener('click', () => {
+    const content = contentInput.value.trim();
+    if (!content) return;
+    const list = document.getElementById('talking-list');
+    const item = document.createElement('div');
+    item.className = 'talking-item pixel-card';
+    const now = new Date();
+    const timeStr = now.toLocaleDateString('zh-CN') + ' ' + now.toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit'});
+    item.innerHTML = `
+      <div class="talking-meta">
+        <span class="talking-avatar">🎮</span>
+        <span class="talking-name">Pixel</span>
+        <span class="talking-date">🕐 ${timeStr}</span>
+        <span class="pixel-tag">刚刚</span>
+      </div>
+      <p class="talking-content">${content.replace(/</g,'&lt;')}</p>
+      <div class="talking-actions">
+        <button class="talking-action like-action">❤️ <span>0</span></button>
+      </div>`;
+    item.style.animation = 'msg-in 0.3s ease-out';
+    list.insertBefore(item, list.firstChild);
+    contentInput.value = ''; charEl.textContent = '0';
+    // 给新动态绑定点赞
+    const likeBtn = item.querySelector('.like-action');
+    likeBtn.addEventListener('click', () => {
+      likeBtn.classList.toggle('liked');
+      const span = likeBtn.querySelector('span');
+      span.textContent = likeBtn.classList.contains('liked') ? '1' : '0';
+    });
+  });
+
+  // 给已有动态绑定点赞
+  document.querySelectorAll('.like-action').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('liked');
+      const span = btn.querySelector('span');
+      span.textContent = btn.classList.contains('liked') ? '1' : '0';
+    });
+  });
+</script>

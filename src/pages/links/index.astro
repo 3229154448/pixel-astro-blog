@@ -1,33 +1,46 @@
 ---
 import PageLayout from '@/layouts/PageLayout/PageLayout.astro';
+import { withBase } from '@/utils/path';
 import { linksData } from '@/page_data/Link';
-import Comment from '@/components/Comment/Comment.astro';
 ---
 <PageLayout title="友链">
   <h1 class="pixel-page-title">🤝 友情链接</h1>
   <div class="links-grid">
     {linksData.map(link => (
       <a href={link.link} target="_blank" class="link-card pixel-card">
-        <div class="link-avatar"><img src={link.avatar} alt={link.name} width="48" height="48" loading="lazy" /></div>
-        <div class="link-info"><span class="link-name">{link.name}</span><span class="link-desc">{link.description}</span></div>
+        <div class="link-avatar">
+          <img src={link.avatar.startsWith('http') ? link.avatar : withBase(link.avatar)} alt={link.name} width="48" height="48" loading="lazy" />
+        </div>
+        <div class="link-info">
+          <span class="link-name">{link.name}</span>
+          <span class="link-desc">{link.description}</span>
+        </div>
       </a>
     ))}
   </div>
   <div class="link-apply pixel-card" style="margin-top: 2rem; padding: 1.5rem;">
     <h3 class="pixel-section-title">📎 申请友链</h3>
-    <p style="font-size: 18px; color: var(--pixel-text-dim); line-height: 1.8;">
-      欢迎交换友链！请在留言区留下你的站点信息：<br/>▪ 站点名称<br/>▪ 站点地址<br/>▪ 头像链接<br/>▪ 站点描述
+    <p class="apply-desc">
+      欢迎交换友链！请在留言区留下你的站点信息：<br/>
+      ▪ 站点名称 ▪ 站点地址 ▪ 头像链接 ▪ 站点描述
     </p>
   </div>
-  <Comment />
 </PageLayout>
+
 <style lang="less">
-.pixel-page-title { font-family: var(--pixel-font-title); font-size: 12px; color: var(--pixel-primary); text-shadow: 3px 3px 0 var(--pixel-shadow-color); margin-bottom: 1.5rem; }
+.pixel-page-title { font-family: var(--pixel-font-title); font-size: 16px; color: var(--pixel-dark); text-shadow: 3px 3px 0 var(--pixel-shadow-color); margin-bottom: 1.5rem; }
 .links-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
-.link-card { display: flex; align-items: center; gap: 1rem; padding: 1rem; text-decoration: none; border-bottom: none; }
-.link-avatar { width: 48px; height: 48px; border: 3px solid var(--pixel-secondary); box-shadow: 3px 3px 0 0 var(--pixel-shadow-color); flex-shrink: 0; img { width: 100%; height: 100%; object-fit: cover; } }
-.link-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.link-name { font-family: var(--pixel-font-title); font-size: 9px; color: var(--pixel-secondary); }
-.link-desc { font-size: 17px; color: var(--pixel-text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pixel-section-title { font-family: var(--pixel-font-title); font-size: 10px; color: var(--pixel-secondary); margin-bottom: 0.75rem; }
+.link-card { display: flex; align-items: center; gap: 1rem; padding: 1rem; text-decoration: none; border-bottom: none;
+  &:hover { transform: translate(-2px, -2px); }
+}
+.link-avatar {
+  width: 48px; height: 48px; border: 3px solid var(--pixel-accent);
+  box-shadow: 3px 3px 0 0 var(--pixel-dark); flex-shrink: 0; overflow: hidden;
+  img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+}
+.link-info { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.link-name { font-family: var(--pixel-font-title); font-size: 10px; color: var(--pixel-accent); }
+.link-desc { font-size: 15px; color: var(--pixel-text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pixel-section-title { font-family: var(--pixel-font-title); font-size: 11px; color: var(--pixel-secondary); margin-bottom: 0.75rem; }
+.apply-desc { font-size: 15px; color: var(--pixel-text-dim); line-height: 1.8; }
 </style>

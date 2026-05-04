@@ -2,12 +2,12 @@
 import Layout from '@/layouts/Layout/Layout.astro';
 import { getCollection } from 'astro:content';
 import { getReadingTime, getWordCount, formatDate } from '@/utils';
+import { withBase } from '@/utils/path';
 import Copyright from '@/components/Copyright/Copyright.astro';
 import PrevNextArticle from '@/components/PrevNextArticle/PrevNextArticle.astro';
 import Comment from '@/components/Comment/Comment.astro';
 import Reward from '@/components/Reward/Reward.astro';
 import Aside from '@/components/Aside/Aside.astro';
-import { withBase } from '@/utils/path';
 import '@/styles/Article.less';
 
 export async function getStaticPaths() {
@@ -22,31 +22,62 @@ allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 const ci = allPosts.findIndex(p => p.id === post.id);
 const prevPost = ci > 0 ? allPosts[ci - 1] : null;
 const nextPost = ci < allPosts.length - 1 ? allPosts[ci + 1] : null;
-const articleUrl = `${Astro.site}${Astro.base?.replace(/\//g, '') || ''}/article/${post.id}`;
+const articleUrl = `https://3229154448.github.io/pixel-astro-blog/article/${post.id}`;
+const coverUrl = post.data.cover ? withBase(post.data.cover) : '';
 ---
 <Layout title={post.data.title} description={post.data.description} cover={post.data.cover}>
   <div class="page-layout">
-    <article class="article-detail pixel-card" style="padding: 2rem;">
-      <div class="article-header">
-        <h1 class="article-title">{post.data.title}</h1>
+    <article class="article-detail pixel-card" style="padding: 0;">
+      {coverUrl && (
+        <div class="article-cover">
+          <img src={coverUrl} alt={post.data.title} />
+          <div class="cover-overlay">
+            <h1 class="cover-title">{post.data.title}</h1>
+          </div>
+        </div>
+      )}
+      <div class="article-body-wrap" style="padding: 2rem;">
+        {!coverUrl && <h1 class="article-title">{post.data.title}</h1>}
         <div class="article-meta">
           <span>📅 {formatDate(post.data.date)}</span>
           {post.data.updated && <span>🔄 {formatDate(post.data.updated)}</span>}
           <span>⏱️ {getReadingTime(post.body || '')} 分钟</span>
           <span>📝 {getWordCount(post.body || '')} 字</span>
         </div>
-        <div class="article-tags">{post.data.tags.map((tag: string) => (<a href={withBase(`/tag/${tag}`)} class="pixel-tag">{tag}</a>))}</div>
+        <div class="article-tags">
+          {post.data.tags.map((tag: string) => (
+            <a href={withBase(`/tag/${tag}`)} class="pixel-tag">{tag}</a>
+          ))}
+        </div>
+        <hr class="pixel-divider" />
+        <div class="article-content"><Content /></div>
+        <Copyright title={post.data.title} url={articleUrl} />
+        {post.data.reward && <Reward />}
+        <PrevNextArticle prev={prevPost ? { title: prevPost.data.title, slug: prevPost.id } : null} next={nextPost ? { title: nextPost.data.title, slug: nextPost.id } : null} />
+        {post.data.comment && <Comment />}
       </div>
-      <div class="article-content"><Content /></div>
-      <Copyright title={post.data.title} url={articleUrl} />
-      {post.data.reward && <Reward />}
-      <PrevNextArticle prev={prevPost ? { title: prevPost.data.title, slug: prevPost.id } : null} next={nextPost ? { title: nextPost.data.title, slug: nextPost.id } : null} />
-      {post.data.comment && <Comment />}
     </article>
     <Aside />
   </div>
 </Layout>
+
 <style lang="less">
 .page-layout { display: flex; gap: 1.5rem; width: 100%; }
-@media screen and (max-width: 768px) { .page-layout { flex-direction: column; } }
+.article-cover {
+  position: relative; overflow: hidden; border-bottom: 4px solid var(--pixel-dark);
+  img { width: 100%; height: 280px; object-fit: cover; image-rendering: auto; }
+}
+.cover-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, rgba(26,26,46,0.85), transparent);
+  padding: 2rem 2rem 1.5rem;
+}
+.cover-title {
+  font-family: var(--pixel-font-title); font-size: 14px; color: white;
+  text-shadow: 3px 3px 0 var(--pixel-dark); line-height: 1.6;
+}
+.article-meta { margin: 1rem 0; }
+.article-tags { margin-bottom: 0.5rem; }
+.pixel-divider { margin: 1rem 0; }
+@media (max-width: 768px) { .page-layout { flex-direction: column; } }
 </style>

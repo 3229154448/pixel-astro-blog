@@ -1,24 +1,91 @@
 ---
 import PageLayout from '@/layouts/PageLayout/PageLayout.astro';
 import { siteConfig } from '@/config';
+import { withBase } from '@/utils/path';
 import '@/styles/About.less';
 ---
 <PageLayout title="关于">
   <div class="about-page">
     <div class="about-header">
-      <div class="about-avatar"><img src="/assets/images/avatar-default.webp" alt={siteConfig.author} width="96" height="96" /></div>
+      <div class="about-avatar">
+        <img src={withBase('/assets/images/avatar-default.webp')} alt={siteConfig.author} width="96" height="96" />
+      </div>
       <h1 class="about-name">{siteConfig.author}</h1>
       <p class="about-motto">{siteConfig.motto}</p>
+      <div class="about-badges">
+        <span class="badge red">🎮 玩家</span>
+        <span class="badge green">💻 开发者</span>
+        <span class="badge blue">🎵 音乐爱好者</span>
+      </div>
     </div>
+
     <div class="about-content pixel-card" style="padding: 2rem;">
       <h2>👋 你好！</h2>
-      <p>欢迎来到像素小站！这是一个基于 Astro 构建的像素风博客主题。</p>
+      <p>欢迎来到像素小站！这是一个基于 <strong>Astro</strong> 构建的像素风博客主题，致敬红白机时代的经典美学。</p>
+
       <h2>🎮 关于本站</h2>
       <p>本站采用像素风格设计，灵感来源于 8-Bit 复古游戏。我们相信，简单的像素也能表达无限的可能。</p>
+      <div class="about-features">
+        <div class="feature-item">
+          <span class="feature-icon">🎨</span>
+          <span class="feature-text">硬阴影 + 粗边框 + 零圆角</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🔤</span>
+          <span class="feature-text">Press Start 2P + ZCOOL KuaiLe</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🎵</span>
+          <span class="feature-text">内置红白机 BGM 播放器</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">⚡</span>
+          <span class="feature-text">Astro 静态生成，极速加载</span>
+        </div>
+      </div>
+
       <h2>🛠️ 技术栈</h2>
-      <p>▪ Astro - 现代静态站点生成器<br/>▪ TypeScript - 类型安全<br/>▪ Less - CSS 预处理器<br/>▪ 像素风设计 - Press Start 2P + VT323 字体</p>
+      <div class="tech-stack">
+        <span class="tech-tag" style="background:#e74c3c">Astro</span>
+        <span class="tech-tag" style="background:#3498db">TypeScript</span>
+        <span class="tech-tag" style="background:#1a1a2e">Less</span>
+        <span class="tech-tag" style="background:#27ae60">像素风设计</span>
+      </div>
+
       <h2>📧 联系方式</h2>
-      <p>▪ GitHub: <a href="https://github.com">github.com</a><br/>▪ Email: pixel@example.com</p>
+      <p>
+        ▪ GitHub: <a href="https://github.com" class="about-link">github.com</a><br/>
+        ▪ Email: <a href="mailto:pixel@example.com" class="about-link">pixel@example.com</a>
+      </p>
     </div>
   </div>
 </PageLayout>
+
+<style lang="less">
+.about-header { text-align: center; margin-bottom: 2rem; }
+.about-avatar img {
+  width: 96px; height: 96px; border: 4px solid var(--pixel-dark);
+  box-shadow: 4px 4px 0 0 var(--pixel-dark); image-rendering: pixelated;
+}
+.about-name { font-family: var(--pixel-font-title); font-size: 14px; color: var(--pixel-dark); margin: 1rem 0 0.5rem; }
+.about-motto { font-size: 18px; color: var(--pixel-text-dim); margin-bottom: 1rem; }
+.about-badges { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.badge {
+  font-family: var(--pixel-font-title); font-size: 8px; color: white;
+  padding: 4px 10px; border: 2px solid var(--pixel-dark); box-shadow: 2px 2px 0 0 var(--pixel-dark);
+  &.red { background: var(--pixel-accent); }
+  &.green { background: var(--pixel-secondary); }
+  &.blue { background: var(--pixel-blue); }
+}
+.about-content { h2 { font-family: var(--pixel-font-title); font-size: 12px; color: var(--pixel-dark); margin: 1.5rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px dashed var(--pixel-dark); } }
+.about-features { display: flex; flex-direction: column; gap: 8px; margin: 1rem 0; }
+.feature-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--pixel-bg); border: 2px solid var(--pixel-dark); }
+.feature-icon { font-size: 20px; }
+.feature-text { font-size: 15px; color: var(--pixel-dark); }
+.tech-stack { display: flex; gap: 8px; flex-wrap: wrap; margin: 1rem 0; }
+.tech-tag {
+  font-family: var(--pixel-font-title); font-size: 9px; color: white;
+  padding: 4px 12px; border: 3px solid var(--pixel-dark); box-shadow: 3px 3px 0 0 var(--pixel-dark);
+}
+.about-link { color: var(--pixel-accent); text-decoration: underline; &:hover { color: var(--pixel-secondary); } }
+</style>
