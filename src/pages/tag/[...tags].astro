@@ -17,4 +17,4 @@ const { tag, posts } = Astro.props;
   <h1 class="pixel-page-title">🏷️ 标签 / {tag}</h1>
   <div class="post-list">{posts.map((post: any) => (<ArticleCard title={post.data.title} description={post.data.description} cover={post.data.cover} date={post.data.date} tags={post.data.tags} categories={post.data.categories} readingTime={getReadingTime(post.body||'')} wordCount={getWordCount(post.body||'')} link={withBase(`/article/${slugify(post.id)}`)} />))}</div>
 </PageLayout>
-<style lang="less">.pixel-page-title { font-family: var(--pixel-font-title); font-size: 12px; color: var(--pixel-primary); text-shadow: 3px 3px 0 var(--pixel-shadow-color); margin-bottom: 1.5rem; }</style>
+<style lang="less">.pixel-page-title { font-family: var(--pixel-font-title); font-size: 12px; color: var(--pixel-accent); text-shadow: 3px 3px 0 var(--pixel-shadow-color); margin-bottom: 1.5rem; }</style>

@@ -31,9 +31,7 @@ import { slugify } from '@/utils/slug';
       <div class="stat-item"><span class="stat-num purple">{tags.length}</span><span class="stat-label">标签</span></div>
     </div>
     <div class="profile-social">
-      <a href="https://github.com" target="_blank" class="social-btn github" title="GitHub">GH</a>
-      <a href="#" class="social-btn twitter" title="Twitter">TW</a>
-      <a href="#" class="social-btn email" title="Email">✉</a>
+      <a href="https://github.com/3229154448" target="_blank" class="social-btn github" title="GitHub">GH</a>
       <a href={withBase('/rss.xml')} class="social-btn rss" title="RSS">RSS</a>
     </div>
   </div>
@@ -135,8 +133,6 @@ import { slugify } from '@/utils/slug';
   font-family: var(--pixel-font-title); font-size: 9px; text-decoration: none;
   transition: all 0.15s ease;
   &.github { background: var(--pixel-dark); }
-  &.twitter { background: var(--pixel-blue); }
-  &.email { background: var(--pixel-pink); }
   &.rss { background: var(--pixel-orange); }
   &:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--pixel-dark); }
 }

@@ -1,5 +1,6 @@
 ---
 ---
+
 <div class="search-wrapper">
   <button class="search-btn" id="search-btn">🔍</button>
   <div class="search-modal" id="search-modal">
@@ -7,6 +8,7 @@
     <div class="search-content pixel-card">
       <div class="search-header">
         <span class="pixel-font">SEARCH</span>
+        <span class="search-shortcut pixel-font">Ctrl+K</span>
         <button class="pixel-btn close-btn" id="search-close">✕</button>
       </div>
       <input type="text" class="pixel-input" id="search-input" placeholder="输入关键词搜索文章..." />
@@ -25,15 +27,27 @@
   font-size: 16px; cursor: pointer; transition: all 0.15s;
   &:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--pixel-dark); }
 }
-.search-modal { display: none; position: fixed; inset: 0; z-index: 200; &.open { display: flex; align-items: flex-start; justify-content: center; padding-top: 10vh; } }
+.search-modal {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  &.open { display: flex; align-items: flex-start; justify-content: center; padding-top: 10vh; }
+}
 .search-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); }
 .search-content { position: relative; width: 90%; max-width: 600px; padding: 1.5rem; z-index: 1; }
-.search-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.search-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 8px; }
 .pixel-font { font-family: var(--pixel-font-title); font-size: 12px; color: var(--pixel-dark); }
+.search-shortcut {
+  font-size: 8px !important; color: var(--pixel-text-dim) !important;
+  background: var(--pixel-bg-grid); padding: 2px 6px;
+  border: 2px solid var(--pixel-dark); margin-left: auto;
+}
 .close-btn { padding: 6px 10px; background: var(--pixel-accent); color: white; font-size: 14px; }
 .search-placeholder { text-align: center; padding: 2rem; color: var(--pixel-text-dim); font-size: 14px; }
-.search-results { margin-top: 1rem; max-height: 60vh; overflow-y: auto;
-  .search-item { padding: 0.75rem; margin-bottom: 4px; border: 3px solid var(--pixel-dark); background: var(--pixel-bg);
+.search-results {
+  margin-top: 1rem; max-height: 60vh; overflow-y: auto;
+  .search-item {
+    padding: 0.75rem; margin-bottom: 4px; border: 3px solid var(--pixel-dark); background: var(--pixel-bg);
+    cursor: pointer; transition: background 0.15s;
+    &:hover { background: var(--pixel-bg-grid); }
     a { display: block; font-family: var(--pixel-font-title); font-size: 9px; color: var(--pixel-accent); text-decoration: none; }
     p { font-size: 15px; color: var(--pixel-text-dim); margin-top: 4px; }
   }
@@ -41,19 +55,50 @@
 </style>
 
 <script>
-  const btn = document.getElementById('search-btn'), modal = document.getElementById('search-modal'),
-    overlay = document.getElementById('search-overlay'), input = document.getElementById('search-input') as HTMLInputElement,
-    results = document.getElementById('search-results'), closeBtn = document.getElementById('search-close');
-  let searchData: any[] = [];
-  function openSearch() { modal?.classList.add('open'); setTimeout(() => input?.focus(), 100); }
-  function closeSearch() { modal?.classList.remove('open'); input.value = ''; results!.innerHTML = '<div class="search-placeholder">输入关键词开始搜索</div>'; }
-  btn?.addEventListener('click', openSearch); overlay?.addEventListener('click', closeSearch); closeBtn?.addEventListener('click', closeSearch);
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSearch(); });
-  input?.addEventListener('input', async () => {
-    const q = input.value.trim().toLowerCase();
-    if (!q) { results!.innerHTML = '<div class="search-placeholder">输入关键词开始搜索</div>'; return; }
-    if (!searchData.length) { try { const r = await fetch(import.meta.env.BASE_URL + 'vh_static/search.json'); searchData = await r.json(); } catch { return; } }
-    const f = searchData.filter(i => i.title.toLowerCase().includes(q) || i.content.toLowerCase().includes(q));
-    results!.innerHTML = f.slice(0, 10).map(i => `<div class="search-item"><a href="${i.url}">${i.title}</a><p>${i.content.substring(0, 120)}...</p></div>`).join('') || '<div class="search-placeholder">没有找到相关文章</div>';
-  });
+const btn = document.getElementById('search-btn'),
+  modal = document.getElementById('search-modal'),
+  overlay = document.getElementById('search-overlay'),
+  input = document.getElementById('search-input') as HTMLInputElement,
+  results = document.getElementById('search-results'),
+  closeBtn = document.getElementById('search-close');
+let searchData: any[] = [];
+
+function openSearch() {
+  modal?.classList.add('open');
+  setTimeout(() => input?.focus(), 100);
+}
+function closeSearch() {
+  modal?.classList.remove('open');
+  input.value = '';
+  results!.innerHTML = '<div class="search-placeholder">输入关键词开始搜索</div>';
+}
+
+btn?.addEventListener('click', openSearch);
+overlay?.addEventListener('click', closeSearch);
+closeBtn?.addEventListener('click', closeSearch);
+
+// Ctrl+K / Cmd+K 快捷键打开搜索
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { closeSearch(); return; }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    e.preventDefault();
+    if (modal?.classList.contains('open')) closeSearch();
+    else openSearch();
+  }
+});
+
+input?.addEventListener('input', async () => {
+  const q = input.value.trim().toLowerCase();
+  if (!q) { results!.innerHTML = '<div class="search-placeholder">输入关键词开始搜索</div>'; return; }
+  if (!searchData.length) {
+    try {
+      const r = await fetch(import.meta.env.BASE_URL + '/vh_static/search.json');
+      searchData = await r.json();
+    } catch { return; }
+  }
+  const f = searchData.filter(i => i.title.toLowerCase().includes(q) || i.content.toLowerCase().includes(q));
+  results!.innerHTML = f.slice(0, 10).map(i =>
+    `<div class="search-item" onclick="location.href='${i.url}'"><a href="${i.url}">${i.title}</a><p>${i.content.substring(0, 120)}...</p></div>`
+  ).join('') || '<div class="search-placeholder">没有找到相关文章</div>';
+});
 </script>
