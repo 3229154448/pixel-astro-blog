@@ -1,28 +1,38 @@
 ---
-interface Props { currentPage: number; totalPages: number; baseUrl?: string; }
-const { currentPage, totalPages, baseUrl = '' } = Astro.props;
+import { withBase } from '@/utils/path';
+interface Props { currentPage: number; totalPages: number; }
+const { currentPage, totalPages } = Astro.props;
 ---
 {totalPages > 1 && (
   <nav class="pagination">
-    <button class="pixel-btn page-btn" disabled={currentPage <= 1}>◁</button>
+    {currentPage > 1 && (
+      <a href={withBase(currentPage === 2 ? '/page/2' : `/page/${currentPage - 1}`)} class="pixel-btn page-btn">◁</a>
+    )}
+    {currentPage <= 1 && <span class="pixel-btn page-btn disabled">◁</span>}
     {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-      <button class:list={['pixel-btn', 'page-btn', { active: page === currentPage }]}>
+      <a href={withBase(page === 1 ? '/' : `/page/${page}`)} class:list={['pixel-btn', 'page-btn', { active: page === currentPage }]}>
         {page}
-      </button>
+      </a>
     ))}
-    <button class="pixel-btn page-btn" disabled={currentPage >= totalPages}>▷</button>
+    {currentPage < totalPages && (
+      <a href={withBase(`/page/${currentPage + 1}`)} class="pixel-btn page-btn">▷</a>
+    )}
+    {currentPage >= totalPages && <span class="pixel-btn page-btn disabled">▷</span>}
   </nav>
 )}
 
 <style lang="less">
 .pagination { display: flex; justify-content: center; gap: 4px; margin: 2.5rem 0; flex-wrap: wrap; }
 .page-btn {
-  padding: 8px 14px; background: var(--pixel-bg-grid); color: var(--pixel-dark);
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 40px; padding: 8px 14px; text-decoration: none;
+  background: var(--pixel-bg-grid); color: var(--pixel-dark);
   font-family: var(--pixel-font-title); font-size: 10px;
   border: 3px solid var(--pixel-dark); box-shadow: 3px 3px 0 0 var(--pixel-dark);
-  &:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--pixel-dark); }
-  &:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: 0 0 0 0 var(--pixel-dark); }
+  transition: all 0.15s;
+  &:hover:not(.disabled) { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--pixel-dark); }
+  &:active:not(.disabled) { transform: translate(3px, 3px); box-shadow: 0 0 0 0 var(--pixel-dark); }
   &.active { background: var(--pixel-accent); color: white; }
-  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  &.disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
 }
 </style>

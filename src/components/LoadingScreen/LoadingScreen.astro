@@ -151,6 +151,13 @@
       hint.textContent = hints[hintIdx];
     }, 1500);
 
+    // 只在首次加载时显示，SPA 导航不显示
+    if (sessionStorage.getItem('pixel-loaded')) {
+      document.getElementById('loading-screen').classList.add('hidden');
+      return;
+    }
+    sessionStorage.setItem('pixel-loaded', '1');
+
     // 进度条动画
     let progress = 0;
     const progressTimer = setInterval(() => {

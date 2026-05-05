@@ -1,6 +1,7 @@
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
 import { siteConfig } from '@/config';
+import { slugify } from '@/utils/slug';
 
 export async function GET(context: any) {
   const allPosts = await getCollection('blog', ({ data }) => !data.draft);
@@ -13,7 +14,7 @@ export async function GET(context: any) {
       title: post.data.title,
       pubDate: post.data.date,
       description: post.data.description,
-      link: `/pixel-astro-blog/article/${post.id}/`,
+      link: `/pixel-astro-blog/article/${slugify(post.id)}/`,
     })),
   });
 }
