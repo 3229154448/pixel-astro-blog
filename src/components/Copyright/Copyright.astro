@@ -3,16 +3,19 @@ import { siteConfig } from '@/config';
 interface Props { title: string; url: string; }
 const { title, url } = Astro.props;
 ---
-<div class="copyright">
-  <p class="copyright-title">📜 版权声明</p>
+<div class="copyright pixel-card">
+  <p class="copyright-title pixel-font">📜 版权声明</p>
   <p>本文标题：<a href={url}>{title}</a></p>
   <p>作者：{siteConfig.author}</p>
   <p>本文链接：<a href={url}>{url}</a></p>
   <p>版权声明：本博客所有文章除特别声明外，均采用 CC BY-NC-SA 4.0 许可协议。</p>
 </div>
+
 <style lang="less">
-.copyright { margin-top: 2rem; padding: 1rem 1.25rem; background: var(--pixel-code-bg); border: var(--pixel-border-width) solid var(--pixel-border); box-shadow: var(--pixel-shadow-offset) var(--pixel-shadow-offset) 0 0 var(--pixel-shadow-color); font-size: 16px; color: var(--pixel-text-dim); line-height: 1.8;
-  a { color: var(--pixel-primary); border-bottom: 2px solid; }
-  .copyright-title { font-family: var(--pixel-font-title); font-size: 9px; color: var(--pixel-secondary); margin-bottom: 0.5rem; }
+.copyright {
+  margin-top: 2rem; padding: 1rem 1.25rem;
+  background: var(--pixel-bg-grid); font-size: 15px; color: var(--pixel-text-dim); line-height: 1.8;
+  a { color: var(--pixel-accent); border-bottom: 2px solid; }
 }
+.copyright-title { font-size: 10px; color: var(--pixel-secondary); margin-bottom: 0.5rem; }
 </style>

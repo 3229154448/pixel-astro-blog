@@ -1,20 +1,66 @@
 ---
 import { siteConfig } from '@/config';
+import { withBase } from '@/utils/path';
 ---
 {siteConfig.reward.enable && (
-  <div class="reward-section">
-    <p class="reward-title">☕ 赞赏支持</p>
+  <div class="reward-section pixel-card">
+    <p class="reward-title pixel-font">☕ 赞赏支持</p>
     <p class="reward-desc">{siteConfig.reward.comment}</p>
     <div class="reward-images">
-      <div class="reward-item"><img src={siteConfig.reward.alipay} alt="支付宝" width="160" height="160" /><span>支付宝</span></div>
-      <div class="reward-item"><img src={siteConfig.reward.wechat} alt="微信" width="160" height="160" /><span>微信</span></div>
+      <div class="reward-item" id="reward-alipay">
+        <div class="reward-qr">
+          <div class="qr-pixel">
+            <div class="qr-row">◼◼◼◻◻◼◼◼</div>
+            <div class="qr-row">◼◻◻◼◼◻◻◼</div>
+            <div class="qr-row">◼◻◻◼◼◻◻◼</div>
+            <div class="qr-row">◼◼◼◻◻◼◼◼</div>
+            <div class="qr-row">◻◻◼◼◼◼◻◻</div>
+            <div class="qr-row">◼◼◼◻◻◼◼◼</div>
+            <div class="qr-row">◼◻◻◼◼◻◻◼</div>
+            <div class="qr-row">◼◼◼◻◻◼◼◼</div>
+          </div>
+        </div>
+        <span class="reward-label pixel-font">支付宝</span>
+      </div>
+      <div class="reward-item" id="reward-wechat">
+        <div class="reward-qr">
+          <div class="qr-pixel wechat-qr">
+            <div class="qr-row">◼◼◼◻◻◼◼◼</div>
+            <div class="qr-row">◼◻◻◼◼◻◻◼</div>
+            <div class="qr-row">◼◻◻◼◼◻◻◼</div>
+            <div class="qr-row">◼◼◼◻◻◼◼◼</div>
+            <div class="qr-row">◻◼◼◻◻◼◼◻</div>
+            <div class="qr-row">◼◼◼◼◼◼◼◼</div>
+            <div class="qr-row">◼◻◻◼◼◻◻◼</div>
+            <div class="qr-row">◼◼◼◻◻◼◼◼</div>
+          </div>
+        </div>
+        <span class="reward-label pixel-font">微信</span>
+      </div>
     </div>
+    <p class="reward-hint pixel-font">SCAN TO SUPPORT</p>
   </div>
 )}
 <style lang="less">
-.reward-section { margin-top: 2rem; padding: 1.5rem; text-align: center; background: var(--pixel-card); border: var(--pixel-border-width) solid var(--pixel-border); box-shadow: var(--pixel-shadow-offset) var(--pixel-shadow-offset) 0 0 var(--pixel-shadow-color); }
-.reward-title { font-family: var(--pixel-font-title); font-size: 10px; color: var(--pixel-secondary); margin-bottom: 0.5rem; }
-.reward-desc { font-size: 18px; color: var(--pixel-text-dim); margin-bottom: 1rem; }
-.reward-images { display: flex; justify-content: center; gap: 1.5rem; }
-.reward-item { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; img { border: var(--pixel-border-width) solid var(--pixel-border); box-shadow: 3px 3px 0 0 var(--pixel-shadow-color); image-rendering: pixelated; } span { font-family: var(--pixel-font-title); font-size: 8px; color: var(--pixel-text-dim); } }
+.reward-section { margin-top: 2rem; padding: 1.5rem; text-align: center; }
+.reward-title { font-size: 11px; color: var(--pixel-secondary); margin-bottom: 0.5rem; }
+.reward-desc { font-size: 16px; color: var(--pixel-text-dim); margin-bottom: 1.25rem; }
+.reward-images { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
+.reward-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;
+  &:hover .reward-qr { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 0 var(--pixel-dark); }
+}
+.reward-qr {
+  width: 140px; height: 140px; border: 4px solid var(--pixel-dark);
+  box-shadow: 4px 4px 0 0 var(--pixel-dark); background: white;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.qr-pixel { display: flex; flex-direction: column; gap: 2px; padding: 8px; }
+.qr-row { font-size: 10px; letter-spacing: 2px; line-height: 1; color: var(--pixel-accent);
+  font-family: monospace;
+}
+.wechat-qr .qr-row { color: var(--pixel-secondary); }
+.reward-label { font-size: 8px; color: var(--pixel-text-dim); }
+.reward-hint { font-size: 8px; color: var(--pixel-accent); margin-top: 1rem; animation: blink 1.5s step-end infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 </style>
