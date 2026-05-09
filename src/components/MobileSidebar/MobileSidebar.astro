@@ -2,7 +2,7 @@
 import { siteConfig } from '@/config';
 import { withBase } from '@/utils/path';
 import { getCollection } from 'astro:content';
-import { slugify } from '@/utils/slug';
+import { slugify, tagSlugify } from '@/utils/slug';
 
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 const categories = [...new Set(allPosts.flatMap(p => p.data.categories))];
@@ -41,7 +41,7 @@ const tags = [...new Set(allPosts.flatMap(p => p.data.tags))];
     <h4 class="mobile-section-title pixel-font">🏷️ 标签</h4>
     <div class="mobile-tags">
       {tags.map(tag => (
-        <a href={withBase(`/tag/${tag}`)} class="mobile-tag" onclick="document.getElementById('mobile-sidebar').classList.remove('open')">{tag}</a>
+        <a href={withBase(`/tag/${tagSlugify(tag)}`)} class="mobile-tag" onclick="document.getElementById('mobile-sidebar').classList.remove('open')">{tag}</a>
       ))}
     </div>
   </div>

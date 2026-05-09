@@ -3,7 +3,7 @@ import Layout from '@/layouts/Layout/Layout.astro';
 import { getCollection } from 'astro:content';
 import { getReadingTime, getWordCount, formatDate } from '@/utils';
 import { withBase } from '@/utils/path';
-import { slugify } from '@/utils/slug';
+import { slugify, tagSlugify } from '@/utils/slug';
 import Copyright from '@/components/Copyright/Copyright.astro';
 import PrevNextArticle from '@/components/PrevNextArticle/PrevNextArticle.astro';
 import Comment from '@/components/Comment/Comment.astro';
@@ -49,7 +49,7 @@ const tocHeadings = headings.filter((h: any) => h.depth >= 2 && h.depth <= 4);
         </div>
         <div class="article-tags">
           {post.data.tags.map((tag: string) => (
-            <a href={withBase(`/tag/${tag}`)} class="pixel-tag">{tag}</a>
+            <a href={withBase(`/tag/${tagSlugify(tag)}`)} class="pixel-tag">{tag}</a>
           ))}
         </div>
         <hr class="pixel-divider" />

@@ -3,7 +3,7 @@ title: '无障碍访问(A11y)完整实践指南'
 description: '构建人人可用的Web应用的完整指南'
 date: 2026-05-10
 tags: ['A11y', '无障碍']
-categories: ['技术文章']
+categories: ['技术']
 toc: true
 comment: true
 reward: false

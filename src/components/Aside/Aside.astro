@@ -1,5 +1,5 @@
 ---
-import { slugify } from '@/utils/slug';
+import { slugify, tagSlugify } from '@/utils/slug';
 import { siteConfig } from '@/config';
 import { withBase } from '@/utils/path';
 import { getCollection } from 'astro:content';
@@ -58,7 +58,7 @@ import { slugify } from '@/utils/slug';
     <h3 class="aside-title">🏷️ 标签云</h3>
     <div class="tag-cloud">
       {tags.map((tag, i) => (
-        <a href={withBase(`/tag/${tag}`)} class="tag-pixel" style={`background: ${tagColors[i % tagColors.length]}`}>{tag}</a>
+        <a href={withBase(`/tag/${tagSlugify(tag)}`)} class="tag-pixel" style={`background: ${tagColors[i % tagColors.length]}`}>{tag}</a>
       ))}
     </div>
   </div>
