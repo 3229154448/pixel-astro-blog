@@ -3,10 +3,9 @@ title: 'Astro静态站点生成优化'
 description: 'Astro框架性能优化与部署实践'
 date: 2026-05-10
 tags: ['Astro', 'SSG']
-categories: ['技术文章']
+categories: ['技术']
+cover: '/assets/images/banner/pixel-blog.webp'
 toc: true
-comment: true
-reward: false
 ---
 
 # Astro静态站点生成优化实践
