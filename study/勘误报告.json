@@ -1,21 +1,32 @@
 {
   "题目册": {
-    "round1_marked_formulas": 56,
-    "round2_numbering_issues": 44,
-    "round3_marked_duplicates": 20,
-    "round4_option_issues": 0,
-    "round5_structure_issues": 0
+    "round1_empty_brackets": 335,
+    "round2_numbering": 13,
+    "round3_duplicates": 101,
+    "round4_options": "OK",
+    "round5_structure": "OK",
+    "stats": {
+      "total_paras": 13724,
+      "non_empty": 13607,
+      "chapters": 34,
+      "sections": 84,
+      "groups": 110,
+      "questions": 2902
+    }
   },
   "答案册": {
-    "round1_marked_formulas": 97,
-    "round2_numbering_issues": 44,
-    "round3_marked_duplicates": 87,
-    "round4_option_issues": 0,
-    "round5_structure_issues": 0
-  },
-  "说明": [
-    "〖公式〗标记表示原docx中的数学公式对象无法提取为纯文本",
-    "建议打印时对照原版docx文件查看公式",
-    "[重复]标记表示该段内容与之前某段完全相同"
-  ]
+    "round1_empty_brackets": 379,
+    "round2_numbering": 8,
+    "round3_duplicates": 137,
+    "round4_options": "OK",
+    "round5_structure": "OK",
+    "stats": {
+      "total_paras": 46797,
+      "non_empty": 46680,
+      "chapters": 28,
+      "sections": 78,
+      "groups": 110,
+      "questions": 2922
+    }
+  }
 }
